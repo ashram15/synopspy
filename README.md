@@ -1,12 +1,17 @@
-# React + Vite
+# SynopSpy: Free Document Analyzer 
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Features
+- <strong>Document Summarizer:</strong> summarizes content of the document in a short response
+- <strong>Document Threat Analysis Rating:</strong> ouputs a rating from 1 to 5 indicating the safety of the document. This feature only applies if the document carries legal importance (ie. court document, terms and condition, license)
+- <strong>Access Past Uploads:</strong> user can access their past uploads analysis by clicking on their uploaded document. 
 
-Currently, two official plugins are available:
+## Process 
+- Built REST API
+- Integretes a React framework with a FastAPI/Python backend
+- Involves NLP model integration in the stack to process user upload and anlalyze data. 
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Technologies 
+- <strong>Frontend:</strong> React, Javascript 
+- <strong>Backend:</strong> FastAPI, Python
+- <strong>Model:</strong> Gemeni API 
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
