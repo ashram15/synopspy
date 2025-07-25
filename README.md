@@ -13,5 +13,6 @@
 ## Technologies 
 - <strong>Frontend:</strong> React, Javascript 
 - <strong>Backend:</strong> FastAPI, Python
+- <strong>File Uploads:</strong> PyMuPDF (fitz)
 - <strong>Model:</strong> Gemeni API 
 
