@@ -1,0 +1,4 @@
+#Telling github that frontend/src contains javascript React code 
+/frontend/src/*.jsx linguist-language=javascript
+/frontend/src/*.css linguist-language=css 
+
