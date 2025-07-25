@@ -1,7 +1,7 @@
 import logo from './assets/logo.png'
 import './App.css'
 
-export default function Header() {
+const Header = () => {
     return (
         <header>
             <nav className="navBar">
@@ -16,3 +16,5 @@ export default function Header() {
         </header>
     );
 }
+
+export default Header;

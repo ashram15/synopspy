@@ -1,7 +1,7 @@
 import mainLogo from './assets/SynopSpy.png'
 import './App.css'
 
-export default function MainPage() {
+const MainPage = () => {
     return (
         <section id="main">
             <div className="fadeInImg">
@@ -10,3 +10,5 @@ export default function MainPage() {
         </section>
     );
 }
+
+export default MainPage;

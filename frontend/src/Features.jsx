@@ -1,8 +1,9 @@
+import React, { useEffect, useRef, useState } from 'react'
 import report from './assets/report.png'
 import './App.css'
 import Typewriter from 'typewriter-effect'
 
-export default function Features() {
+const Features = () => {
     return (
         <>
             <section id="features">
@@ -26,3 +27,5 @@ export default function Features() {
         </>
     );
 }
+
+export default Features;

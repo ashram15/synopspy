@@ -12,6 +12,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  border: 1px solid #00BF63;
 }
 
 
@@ -81,7 +82,8 @@ h1 {
 #features {
   display: flex;
   align-items: center;
-  margin-top: 10px;
+  /*margin-top:10px;*/
+  border: 1px solid #00BF63;
 }
 
 #about {
@@ -115,9 +117,32 @@ h1 {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  border: 1px solid #00BF63;
 }
 
-.uploadButton {
+.upload-result {
+  width: 100%;
+  max-width: 700px;
+  border-radius: 20px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: white;
+  color: #048748;
+}
+
+.upload-result p {
+  color: #545454;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.uploadButton,
+.file-input {
   width: auto;
   padding: 15px 80px;
   border: none;
@@ -138,17 +163,26 @@ h1 {
   height: 60px;
 }
 
+.list-icon-pdf {
+  margin-right: 10px;
+}
+
 .past-uploads {
   width: 100%;
   max-width: 700px;
   border-radius: 20px;
   margin: 20px auto;
-  display: flex;
   background-color: #D9EFBD;
   color: #545454;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  align-items: flex-end;
+}
+
+.past-uploads h3 {
+  text-align: center;
+}
+
+.past-uploads ul li {
+  list-style: none;
 }
 
 
