@@ -2,12 +2,16 @@ import json
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, UploadFile, File
 import fitz  # PyMuPDF for PDF processing
-from key import API_KEY  # Import your API key from key.py
+from dotenv import load_dotenv
+import os
 from google import genai
 from docx import Document
 
 
 app = FastAPI()
+
+load_dotenv()  # Load environment variables from .env file
+API_KEY = os.getenv("GEMENI_API_KEY")
 
 
 # Allow CORS for origin http://localhost:5173

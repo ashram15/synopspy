@@ -27,3 +27,4 @@ dist-ssr
 #python
 __pycache__/
 key.py/
+.env 
