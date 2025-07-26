@@ -14,7 +14,7 @@ load_dotenv()  # Load environment variables from .env file
 API_KEY = os.getenv("GEMENI_API_KEY")
 
 
-# Allow CORS for origin http://localhost:5173
+# Allow CORS for origin {FRONTEND_URL}
 # Because frontend and backend are running on different ports
 # EXTRA INFORMATION:
 # CORS (Cross-Origin Resource Sharing) is a mechanism that allows restricted resources on a web
