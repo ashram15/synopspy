@@ -27,4 +27,8 @@ dist-ssr
 #python
 __pycache__/
 key.py/
-.env 
+
+#environment variables
+backend/.env 
+frontend/.env
+

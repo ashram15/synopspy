@@ -23,9 +23,11 @@ API_KEY = os.getenv("GEMENI_API_KEY")
 # In production, you should restrict this to specific origins
 # You can also use a wildcard '*' to allow all origins, but it's not recommended for production
 # MAKE SURE TO RESTRICT CORS IN PRODUCTION/DEPLOYMENT (change allow_origins to specific website domain)
+FRONTEND_URL = os.getenv("FRONTEND_URL")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://synopspy.onrender.com", "http://localhost:5173"],
+    # Allow requests from the frontend URL
+    allow_origins=["https://synopspy.onrender.com", FRONTEND_URL],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -24,8 +24,10 @@ const Upload = () => {
 
         setLoading(true);
 
+        const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
         try {
-            const response = await fetch("https://synopspy-backend.onrender.com/upload", {
+            const response = await fetch(`${BACKEND_URL}/upload`, {
                 method: "POST",
                 body: formData,
                 // Content-Type header is automatically set to multipart/form-data by FormData
