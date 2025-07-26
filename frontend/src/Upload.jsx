@@ -25,7 +25,7 @@ const Upload = () => {
         setLoading(true);
 
         try {
-            const response = await fetch("https://synopspy.onrender.com/upload", {
+            const response = await fetch("https://synopspy-backend.onrender.com/upload", {
                 method: "POST",
                 body: formData,
                 // Content-Type header is automatically set to multipart/form-data by FormData
