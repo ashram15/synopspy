@@ -25,7 +25,7 @@ API_KEY = os.getenv("GEMENI_API_KEY")
 # MAKE SURE TO RESTRICT CORS IN PRODUCTION/DEPLOYMENT (change allow_origins to specific website domain)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["https://synopspy.onrender.com", "http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
