@@ -2,6 +2,8 @@
 SynopSpy is a full stack web application that help users understand and assess complex
 documents. Some examples of documents SynopSpy helps analyze are complicating homework assignments, legal fine print, court documents, or terms and conditions. SynopSpy uses NLP to summarize and analyze these documents, flag risky language, and assign a document safety rating. 
 
+## Live Application: https://synopspy.onrender.com
+
 ## Features
 - <strong>Document Summarizer:</strong> summarizes content of the document in a short response. 
 - <strong>Threat Analysis and Safety Rating:</strong> ouputs a rating from 1 to 5 indicating the safety of the document. This feature only applies if the document carries legal importance (ie. court document, terms and condition, license)
