@@ -98,9 +98,13 @@ const Upload = () => {
                         </ul>
                         <h3><strong>Questions to ask:</strong></h3>
                         <ul>
-                            {uploadResult["questions"].map((question, index) => (
-                                <li key={index}>{question}</li>
-                            ))}
+                            {uploadResult["questions"].length > 0 ? (
+                                uploadResult["questions"].map((question, index) => (
+                                    <li key={index}>{question}</li>
+                                ))
+                            ) : (
+                                <li>No questions to ask.</li>
+                            )}
                         </ul>
 
                     </div>

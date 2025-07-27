@@ -70,9 +70,9 @@ def handleFile(filetext):
                                             "Summarize the file content in 3 sentences.",
                                             "If the topic of the file is an important document (like a legal document, contract, or terms and conditions), "
                                             "rate its security level on a scale of 1 to 5 (1 being safe document, 5 being highly sensitive document). "
-                                            "Advise the user what to do if they encounter this. In addition to the rating, flag any concerning language or phrases that indicate potential security risks. Answer this concerning language in an array of strings. ",
+                                            "Advise the user what to do if they encounter this. In addition to the rating, flag any concerning language or phrases that indicate potential security risks. Answer this concerning language in an array of strings. Keep this concise and to the point.",
                                             "Respond ONLY as JSON.The format should be like {"
-                                            "'topic': 'text', 'summary':'text','security_level':'number on scale with description of level', 'concerning_language':'text', 'questions': 'questions the user should ask regarding the document. Answer this in a array of strings. If none, just say so and explain'Do not include any other text.",
+                                            "'topic': 'text', 'summary':'text','security_level':'number on scale with description of level', 'concerning_language':'text', 'questions': 'questions the user should ask regarding the document. Answer this in a array of strings. Keep these questions concise.'Do not include any other text.",
                                             "Also keep the response short and concise."
                                             ],
     )
