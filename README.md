@@ -19,7 +19,7 @@ documents. Some examples of documents SynopSpy helps analyze are complicating ho
 - <strong>Frontend:</strong> React, Javascript 
 - <strong>Backend:</strong> FastAPI, Python
 - <strong>File Uploads/Parsing:</strong> PyMuPDF, python-docx Libraries
-- <strong>Backend-Frontend Communication:</strong>CORS (Cross-Origin Resource Sharing), RESTful API
+- <strong>Utilizes CORS to enable cross-origin requests between the frontend (React) and backend (FastAPI). All data exchanges between frontend and backend is handled via a RESTful API</strong>
 - <strong>Model:</strong> Gemini API 
 
 ## How it works
