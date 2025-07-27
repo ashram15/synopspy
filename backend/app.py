@@ -5,7 +5,7 @@ import fitz  # PyMuPDF for PDF processing
 from dotenv import load_dotenv
 import os
 from google import genai
-from docx import Document
+from docx import Document  # python-docx for DOCX processing
 
 
 app = FastAPI()
@@ -68,9 +68,11 @@ def handleFile(filetext):
     response = client.models.generate_content(
         model="gemini-2.5-flash", contents=[myfile, "\nTell me the topic of the file.",
                                             "Summarize the file content in 3 sentences.",
-                                            "If the topic of the file is an important document (like a legal document, contract, or terms and conditions), rate its security level on a scale of 1 to 5 (1 being safe document, 5 being highly sensitive document). In addition to the rating, flag any concerning language or phrases that indicate potential security risks.",
+                                            "If the topic of the file is an important document (like a legal document, contract, or terms and conditions), "
+                                            "rate its security level on a scale of 1 to 5 (1 being safe document, 5 being highly sensitive document). "
+                                            "Advise the user what to do if they encounter this. In addition to the rating, flag any concerning language or phrases that indicate potential security risks.",
                                             "Respond ONLY as JSON.The format should be like {"
-                                            "'topic': 'text', 'summary':'text','security_level':'number on scale with description of level', 'concerning_language':'text'} Do not include any other text.",
+                                            "'topic': 'text', 'summary':'text','security_level':'number on scale with description of level', 'concerning_language':'text', 'questions': 'questions the user should ask regarding the document. Answer this in a array of strings. If none, just say so and explain'Do not include any other text.",
                                             "Also keep the response short and concise."
                                             ],
     )

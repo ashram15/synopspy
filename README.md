@@ -18,7 +18,7 @@ documents. Some examples of documents SynopSpy helps analyze are complicating ho
 ## Technologies 
 - <strong>Frontend:</strong> React, Javascript 
 - <strong>Backend:</strong> FastAPI, Python
-- <strong>File Uploads/Parsing:</strong> PyMuPDF (fitz)
+- <strong>File Uploads/Parsing:</strong> PyMuPDF, python-docx Libraries
 - <strong>Backend-Frontend Communication:</strong>CORS (Cross-Origin Resource Sharing), RESTful API
 - <strong>Model:</strong> Gemini API 
 
