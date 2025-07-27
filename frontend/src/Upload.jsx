@@ -57,7 +57,7 @@ const Upload = () => {
 
     useEffect(() => {
         if (uploadResult) {
-            console.log("uploadResult updated:", uploadResult["security_level"]);
+            console.log("uploadResult updated:", uploadResult["questions"]);
 
         }
     }, [uploadResult]);
@@ -88,6 +88,12 @@ const Upload = () => {
                         <p>{uploadResult["security_level"]}</p>
                         <h3><strong>Concerning Language:</strong></h3>
                         <p>{uploadResult["concerning_language"]}</p>
+                        <h3><strong>Questions to ask:</strong></h3>
+                        <ul>
+                            {uploadResult["questions"].map((question, index) => (
+                                <li key={index}>{question}</li>
+                            ))}
+                        </ul>
 
                     </div>
 
