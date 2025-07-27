@@ -87,7 +87,15 @@ const Upload = () => {
                         <h3><strong>Document Threat Analysis Rating:  </strong></h3>
                         <p>{uploadResult["security_level"]}</p>
                         <h3><strong>Concerning Language:</strong></h3>
-                        <p>{uploadResult["concerning_language"]}</p>
+                        <ul>
+                            {uploadResult["concerning_language"].length > 0 ? (
+                                uploadResult["concerning_language"].map((phrase, index) => (
+                                    <li key={index}>{phrase}</li>
+                                ))
+                            ) : (
+                                <li>No concerning language found.</li>
+                            )}
+                        </ul>
                         <h3><strong>Questions to ask:</strong></h3>
                         <ul>
                             {uploadResult["questions"].map((question, index) => (
