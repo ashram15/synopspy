@@ -39,7 +39,7 @@ const Upload = () => {
                 // alert("File Uploaded Successfully!");
                 //Update UI
                 setUploadResult(result);
-                setPastUploads(prev => [...prev, { name: file.name, type: file.type, extension: extension, data: result }]); // Store the uploaded file data
+                setPastUploads(prev => [...prev, { name: file.name, type: file.type, extension: extension, data: result }]); // Store the uploaded file data in pastUploads
 
             } else {
                 console.error("File upload failed:", response.statusText);
