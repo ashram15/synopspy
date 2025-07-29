@@ -90,14 +90,11 @@ def handleFile(filetext):
 
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
-    """
-    Endpoint to handle file uploads.
-    """
     try:
         contents = await file.read()
-        # Here you can process the file contents as needed
-        # For example, if it's a PDF, you can use PyMuPDF to extract text or metadata
-        # Save the file temporarily to extract text
+
+        # process file contents based on file type.
+        # Save file contents to a temporary file
         with open(file.filename, "wb") as f:
             f.write(contents)
         if file.content_type == "application/pdf":
