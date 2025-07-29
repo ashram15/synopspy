@@ -103,7 +103,7 @@ async def upload_file(file: UploadFile = File(...)):
         elif file.content_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
             text = extract_text_from_doc(file.filename)
 
-         # Optionally, you can delete the file after processing
+         # delete the file after processing
         import os
         os.remove(file.filename)
 
