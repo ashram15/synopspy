@@ -35,6 +35,14 @@ documents. Some examples of documents SynopSpy helps analyze are complicating ho
 6. Backend cleans up AI response and sends result as a JSON object to frontend. 
 4. Frontend waits for result, parses data from JSON object, and displays SynopSpy report to user. 
 
+## ⚠️ Usage Notice
+This project was created by me (Aishwarya-ashram15) as a personal project.
+
+All Rights Reserved. 
+
+
+
+
 
 
 
