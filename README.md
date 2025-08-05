@@ -11,7 +11,7 @@ documents. Some examples of documents SynopSpy helps analyze are complicating ho
 - <strong>AI-powered Legal NLP</strong>: Uses the Gemini API to detect complex legal language and highlight sections of the document that require increased oversight. 
 
 ## Process 
-- Built RESTful API
+- Built a RESTful API
 - Integrates a React framework with a FastAPI/Python backend
 - Involves NLP model integration in the stack to process user upload and analyze data. 
 
