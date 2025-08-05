@@ -16,7 +16,7 @@ const Features = () => {
                         ],
                         autoStart: true,
                         loop: true,
-                        delay: -20
+                        delay: 60
                     }} />
                 </div>
 

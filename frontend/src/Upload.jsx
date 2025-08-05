@@ -5,19 +5,20 @@ import docxIcon from './assets/docx.png'
 import loadImg from './assets/animation.gif'
 
 const Upload = () => {
-    const [uploadResult, setUploadResult] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [pastUploads, setPastUploads] = useState([]);
+    const [uploadResult, setUploadResult] = useState(null); //uploadResult = null initially 
+    const [loading, setLoading] = useState(false); //loading set to false initially 
+    const [pastUploads, setPastUploads] = useState([]); //pastUploads is set to an empty array 
 
     async function handleFileUpload(event) {
-        const fileInput = document.querySelector('.file-input');
-        const file = fileInput.files[0];
-        const extension = file.name.split('.').pop().toLowerCase(); // Get the file extension
+        const fileInput = document.querySelector('.file-input'); //will store a list of files in fileInput
+        const file = fileInput.files[0]; //so we need the exact file in the list of files
 
         if (!file) {
             alert("Please select a file to upload.");
             return;
         }
+
+        const extension = file.name.split('.').pop().toLowerCase(); // Get the file extension
 
         const formData = new FormData();
         formData.append('file', file); //"file" is the key expected by the backend
@@ -30,7 +31,6 @@ const Upload = () => {
             const response = await fetch(`${BACKEND_URL}/upload`, {
                 method: "POST",
                 body: formData,
-                // Content-Type header is automatically set to multipart/form-data by FormData
             });
 
             if (response.ok) {
@@ -55,13 +55,6 @@ const Upload = () => {
 
     }
 
-    useEffect(() => {
-        if (uploadResult) {
-            console.log("uploadResult updated:", uploadResult["questions"]);
-
-        }
-    }, [uploadResult]);
-
     return (
         <section id="upload">
             {!uploadResult && !loading ? (
@@ -78,7 +71,6 @@ const Upload = () => {
 
             ) : (
                 <>
-
                     <div className="upload-result">
                         <h2>Results</h2>
                         <h3><strong>Topic: </strong>{uploadResult["topic"]}</h3>
