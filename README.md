@@ -3,6 +3,7 @@ SynopSpy is a full stack web application that help users understand and assess c
 documents. Some examples of documents SynopSpy helps analyze are legal fine print, court documents, or terms and conditions. SynopSpy uses NLP(Natural Language Processing) to summarize and analyze these documents, flag risky language, and assign a document safety rating. 
 
 ## Live Application: https://synopspy.onrender.com
+![synopspy_demo.gif](frontend/src/assets/synopspy_demo.gif)
 
 ## Key Features
 - <strong>AI-Powered Summarization and Risk Analysis:</strong> Leverages Google's Gemini API to perform complex NLP tasks, including large document summarization and content risk analysis. Detects complex legal language and highlights sections in the document that require increased oversight. 
