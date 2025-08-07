@@ -1,4 +1,4 @@
-# SynopSpy: Free Document Analyzer with Legal Risk Insights 
+# SynopSpy: Free Document Summarizer with Legal Risk Analysis 
 SynopSpy is a full stack web application that help users understand and assess complex
 documents. Some examples of documents SynopSpy helps analyze are legal fine print, court documents, or terms and conditions. SynopSpy uses NLP(Natural Language Processing) to summarize and analyze these documents, flag risky language, and assign a document safety rating. 
 
