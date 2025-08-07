@@ -18,7 +18,7 @@ documents. Some examples of documents SynopSpy helps analyze are legal fine prin
 ## Technologies 
 - <strong>Frontend:</strong> React, Javascript 
 - <strong>Backend:</strong> FastAPI, Python
-- <strong>API-Communication</strong>Custom built RESTful API handles all data exchanges between frontend and backend. CORS is used to allow cross-origin requests. 
+- <strong>API-Communication: </strong>Custom built RESTful API handles all data exchanges between frontend and backend. CORS is used to allow cross-origin requests. 
 - <strong>File Processing:</strong> PyMuPDF, python-docx Libraries
 - <strong>AI-Model:</strong> Google Gemini 
 
