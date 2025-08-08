@@ -6,7 +6,7 @@ documents. Some examples of documents SynopSpy helps analyze are legal fine prin
 ![synopspy_demo.gif](frontend/src/assets/synopspy_demo.gif)
 
 ## Key Features
-- <strong>AI-Powered Summarization and Risk Analysis:</strong> Leverages Google's Gemini API to perform complex NLP tasks, including large document summarization and content risk analysis. Detects complex legal language and highlights sections in the document that require increased oversight. 
+- <strong>AI-Powered Summarization and Risk Analysis:</strong> Leverages <strong>Google's Gemini API </strong> to perform complex NLP tasks, including large document summarization and content risk analysis. Detects complex legal language and highlights sections in the document that require increased oversight. 
 - <strong>Dynamic Safety Rating:</strong> processes AI output and generates a 1-5 safety score, providing users with a quick understanding of document risk.
 - <strong>Upload History:</strong> provides session-based access to a user's previous document uploads, allowing for easy comparison and review. 
 
