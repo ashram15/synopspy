@@ -22,6 +22,21 @@ documents. Some examples of documents SynopSpy helps analyze are legal fine prin
 - <strong>File Processing:</strong> PyMuPDF, python-docx Libraries
 - <strong>AI-Model:</strong> Google Gemini 
 
+## How to Run Locally: 
+- To run the program, run both the frontend and backend code simultaneously. First navigate into the synopspy-project folder.
+- To run Frontend, enter the following in your terminal:
+    - <code>cd frontend</code>  
+    - <code>npm run dev</code>  
+- To run Backend, enter the following in your terminal:  
+    - <code>cd backend</code>   
+    - Install Requirements   
+        - <code> pip install -r requirements.txt </code>  
+    - Create and activate venv   
+        - <code>python -m venv .venv </code>  
+        - <code>source .venv/bin/activate   
+    - <code>uvicorn app:app --reload</code>  
+- Then, in your browser, search localhost::5173. You can see synopspy-project locally on your computer.   
+
 ## ⚠️ Usage Notice
 This project was created by me (Aishwarya-ashram15) as a personal project.
 
