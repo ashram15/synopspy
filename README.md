@@ -22,23 +22,23 @@ documents. Some examples of documents SynopSpy helps analyze are legal fine prin
 - <strong>File Processing:</strong> PyMuPDF, python-docx Libraries
 - <strong>AI-Model:</strong> Google Gemini 
 
-## How to Run Locally: 
-- To run the program, run both the <strong>React</strong> frontend and the <strong>FastAPI</strong> backend code simultaneously. 
-1. First navigate to the project root  
-    <pre>```cd synopspy-project```</pre>
-2. Start the frontend  
-    <pre>```cd frontend 
-             npm install 
-             npm run dev```</pre>
+## How to Run Locally:   
+- To run the program, run both the <strong>React</strong> frontend and the <strong>FastAPI</strong> backend code simultaneously.   
+1. First navigate to the project root    
+    ```cd synopspy-project```  
+2. Start the frontend    
+    ```cd frontend ```  
+    ```npm install ```  
+    ```npm run dev```  
 3. Start the backend on localhost:8000:  
-    <pre>```cd backend</code>```</pre>
+    ```cd backend</code>```  
     - Create and activate venv  
-        <pre>```python -m venv .venv 
-                source .venv/bin/activate```</pre>
-    - Install Requirements 
-        <pre>```pip install -r requirements.txt```</pre>
-    - Run Backend:
-        <pre>```uvicorn app:app --reload</code>``` </pre>
+        ```python -m venv .venv```  
+        ```source .venv/bin/activate```
+    - Install Requirements   
+        ```pip install -r requirements.txt```
+    - Run Backend:  
+        ```uvicorn app:app --reload</code>```  
 <strong>The Frontend should now be running on <code>localhost:5173</code> and the backend on <code>localhost:8000</code></strong>
 4. Access the App
     Go to browser and access frontend through <code>localhost:5173</code>
