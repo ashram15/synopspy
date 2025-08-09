@@ -24,16 +24,16 @@ documents. Some examples of documents SynopSpy helps analyze are legal fine prin
 
 ## How to Run Locally: 
 - To run the program, run both the <strong>React</strong> frontend and the <strong>FastAPI</strong> backend code simultaneously. 
-1. First navigate to the project root
+1. First navigate to the project root  
     ``` cd synopspy-project```
-2. Start the frontend
-    ```cd frontend npm install npm run dev```
-3. Start the backend on localhost:8000:
+2. Start the frontend  
+    <pre>``` bash cd frontend npm install npm run dev```</pre>
+3. Start the backend on localhost:8000:  
     ``` cd backend</code>```
-    - Create and activate venv
-        ```  python -m venv .venv source .venv/bin/activate```
+    - Create and activate venv  
+        <pre>```bash python -m venv .venv source .venv/bin/activate```</pre>
     - Install Requirements 
-        ```  pip install -r requirements.txt ```
+        <pre>```bash pip install -r requirements.txt ```</pre>
     - Run Backend:
         ```  uvicorn app:app --reload</code>```
 <strong>The Frontend should now be running on <code>localhost:5173</code> and the backend on <code>localhost:8000</code></strong>
