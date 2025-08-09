@@ -30,12 +30,12 @@ documents. Some examples of documents SynopSpy helps analyze are legal fine prin
 - To run Backend, enter the following in your terminal:
     - <code>cd backend</code>
     - Install Requirements 
-        - <code> pip install -r requirements.txt </code>
+    - <code> pip install -r requirements.txt </code>
     - Create and activate venv
-        - <code>python -m venv .venv </code>
-        - <code>source .venv/bin/activate
+    - <code>python -m venv .venv </code>
+    - <code>source .venv/bin/activate
     - Run Backend:
-        - <code>uvicorn app:app --reload</code>
+    - <code>uvicorn app:app --reload</code>
 - Then, in your browser, search localhost::5173. You can see synopspy-project locally on your computer.   
 
 ## ⚠️ Usage Notice
