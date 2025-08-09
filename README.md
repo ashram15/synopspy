@@ -33,8 +33,9 @@ documents. Some examples of documents SynopSpy helps analyze are legal fine prin
         - <code> pip install -r requirements.txt </code>  
     - Create and activate venv   
         - <code>python -m venv .venv </code>  
-        - <code>source .venv/bin/activate   
-    - <code>uvicorn app:app --reload</code>  
+        - <code>source .venv/bin/activate 
+    - Run Backend:
+        - <code>uvicorn app:app --reload</code>  
 - Then, in your browser, search localhost::5173. You can see synopspy-project locally on your computer.   
 
 ## ⚠️ Usage Notice
