@@ -41,7 +41,7 @@ documents. Some examples of documents SynopSpy helps analyze are legal fine prin
         ```uvicorn app:app --reload</code>```  
 <strong>The Frontend should now be running on <code>localhost:5173</code> and the backend on <code>localhost:8000</code></strong>
 4. Access the App
-    Go to browser and access frontend through <code>localhost:5173</code>
+    - Go to browser and access frontend through <code>localhost:5173</code>
 
 ## ⚠️ Usage Notice
 This project was created by me (Aishwarya-ashram15) as a personal project.
