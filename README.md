@@ -22,7 +22,7 @@ documents. Some examples of documents SynopSpy helps analyze are legal fine prin
 - <strong>File Processing:</strong> PyMuPDF, python-docx Libraries
 - <strong>AI-Model:</strong> Google Gemini 
 
-## How to Run Locally:   
+<!-- ## How to Run Locally:   
 - To run the program, run both the <strong>React</strong> frontend and the <strong>FastAPI</strong> backend code simultaneously.   
 1. First navigate to the project root    
     ```cd synopspy-project```  
@@ -39,7 +39,7 @@ documents. Some examples of documents SynopSpy helps analyze are legal fine prin
         ```pip install -r requirements.txt```
     - Run Backend:  
         ```uvicorn app:app --reload</code>```  
-<strong>The Frontend should now be running on <code>localhost:5173</code> and the backend on <code>localhost:8000</code></strong>
+<strong>The Frontend should now be running on <code>localhost:5173</code> and the backend on <code>localhost:8000</code></strong> -->
 4. Access the App
     - Go to browser and access frontend through <code>localhost:5173</code>
 
