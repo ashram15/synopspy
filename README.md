@@ -1,6 +1,8 @@
 # SynopSpy: Free Document Summarizer with Legal Risk Analysis 
 SynopSpy is a full stack web application that help users understand and assess complex
-documents. Some examples of documents SynopSpy helps analyze are legal fine print, court documents, or terms and conditions. SynopSpy uses NLP(Natural Language Processing) to summarize and analyze these documents, flag risky language, and assign a document safety rating. 
+documents. Some examples of documents SynopSpy helps analyze are legal fine print, court documents, or terms and conditions. SynopSpy uses NLP(Natural Language Processing) to summarize and analyze these documents, flag risky language, and assign a document safety rating.
+
+📝<strong>Note:</strong> Synopspy is hosted on Render's free-tier. Render's server may go to sleep after a period of inactivity. Thus, <strong>the first request on Synopspy might take 1-2 minutes to load</strong> as Render's server wakes up. <strong>The subsequent requests will be much faster!</strong>
 
 ## Live Application: https://synopspy.onrender.com
 ![synopspy_demo.gif](frontend/src/assets/synopspy_demo.gif)
