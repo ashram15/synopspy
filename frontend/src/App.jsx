@@ -14,7 +14,6 @@ function App() {
         <Features />
         <Upload />
         <Footer />
-
       </div>
     </>
   )

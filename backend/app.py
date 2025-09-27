@@ -1,18 +1,30 @@
 import json
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI, UploadFile, File
+from fastapi.security import HTTPBearer
+from fastapi import FastAPI, UploadFile, File, APIRouter, Depends, HTTPException
+from db import db  # Import the database connection
+from io import BytesIO
+from datetime import datetime
+from jose import jwt  # For JWT token handling
 import fitz  # PyMuPDF for PDF processing
 from dotenv import load_dotenv
 import os
+import requests
 from google import genai
 from docx import Document  # python-docx for DOCX processing
 
 
-app = FastAPI()
-
 load_dotenv()  # Load environment variables from .env file
 API_KEY = os.getenv("GEMENI_API_KEY")
 
+auth_scheme = HTTPBearer()
+AUTH_0_DOMAIN = os.getenv("AUTH_0_DOMAIN")
+API_AUDIENCE = os.getenv("AUTH_0_AUDIENCE")
+ALGORITHMS = ["RS256"]
+
+
+app = FastAPI()
+router = APIRouter()
 
 # Allow CORS for origin {FRONTEND_URL}
 # Because frontend and backend are running on different ports
@@ -34,21 +46,47 @@ app.add_middleware(
 )
 
 
-def extract_text_from_pdf(pdf_path):
+def get_current_user(token: str = Depends(auth_scheme)):
+    try:
+        # Get JWKS token from Auth0
+        jwks_url = f"https://{AUTH_0_DOMAIN}/.well-known/jwks.json"
+        jwks = requests.get(jwks_url).json()
+        unverified_header = jwt.get_unverified_header(token.credentials)
+        rsa_key = {}
+        for key in jwks["keys"]:
+            if key["kid"] == unverified_header["kid"]:
+                rsa_key = {
+                    "kty": key["kty"],
+                    "kid": key["kid"],
+                    "use": key["use"],
+                    "n": key["n"],
+                    "e": key["e"]
+                }
+        if not rsa_key:
+            raise HTTPException(status_code=401, detail="Invalid token")
+
+        payload = jwt.decode(token.credentials, rsa_key, algorithms=ALGORITHMS,
+                             audience=API_AUDIENCE, issuer=f"https://{AUTH_0_DOMAIN}/")
+        return payload
+    except Exception:
+        raise HTTPException(status_code=401, detail="Token Validation Failed")
+
+
+def extract_text_from_pdf_bytes(pdf_bytes):
     text = ""
     try:
-        with fitz.open(pdf_path) as doc:
+        with fitz.open(stream=pdf_bytes, filename="pdf") as doc:
             for page in doc:
                 text += page.get_text()
     except Exception as e:
-        print(f"Error extacting text from PDF: {e}")
+        print(f"Error extracting text from PDF: {e}")
     return text
 
 
-def extract_text_from_doc(docx_path):
+def extract_text_from_doc_bytes(docx_bytes):
     text = ""
     try:
-        doc = Document(docx_path)
+        doc = Document(BytesIO(docx_bytes))
         for para in doc.paragraphs:
             text += para.text + "\n"
     except Exception as e:
@@ -89,27 +127,56 @@ def handleFile(filetext):
 
 
 @app.post("/upload")
-async def upload_file(file: UploadFile = File(...)):
+async def upload_file(file: UploadFile = File(...), user: dict = Depends(get_current_user)):
+    print("User payload:", user)
     try:
         contents = await file.read()
 
-        # process file contents based on file type.
+        # Process file contents based on file type
         # Save file contents to a temporary file
-        with open(file.filename, "wb") as f:
-            f.write(contents)
+        # with open(file.filename, "wb") as f:
+        #     f.write(contents)
         if file.content_type == "application/pdf":
-            text = extract_text_from_pdf(file.filename)
+            text = extract_text_from_pdf_bytes(contents)
             # return {"filename": file.filename, "text": text, "content_type": file.content_type}
         elif file.content_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-            text = extract_text_from_doc(file.filename)
+            text = extract_text_from_doc_bytes(contents)
+        else:
+            return {"error": "Unsupported file type"}
 
-         # delete the file after processing
-        import os
-        os.remove(file.filename)
+        #  # delete the file after processing
+        # import os
+        # os.remove(file.filename)
 
-        return handleFile(text)
+        analysis_result = handleFile(text)
 
+        # Save analysis + metadata to MongoDB
+        await db.uploads.insert_one({
+            "filename": file.filename,
+            "content_type": file.content_type,
+            "user_id": user["sub"],  # Replace with actual user ID if available
+            "analysis": analysis_result,
+            "timestamp": datetime.utcnow()
+        })
+
+        # Return the analysis
+        # return {
+        #     "file_url": public_url,
+        #     "analysis": analysis_result
+        # }
+        return analysis_result
     except Exception as e:
         return {"error": str(e)}
 
 print("Received file:")
+
+
+@app.get("/uploads")
+async def get_uploads(user: dict = Depends(get_current_user)):
+    uploads = await db.uploads.find({"user_id": user["sub"]}).to_list(100)
+
+    # Convert ObjectId to string for JSON serialization
+    for upload in uploads:
+        upload["_id"] = str(upload["_id"])
+
+    return uploads

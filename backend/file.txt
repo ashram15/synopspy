@@ -1,232 +1,101 @@
-                                 Apache License
-                           Version 2.0, January 2004
-                        http://www.apache.org/licenses/
-   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
-   1. Definitions.
-      "License" shall mean the terms and conditions for use, 
-reproduction,
-      and distribution as defined by Sections 1 through 9 of this 
-document.
-      "Licensor" shall mean the copyright owner or entity authorized 
-by
-      the copyright owner that is granting the License.
-      "Legal Entity" shall mean the union of the acting entity and all
-      other entities that control, are controlled by, or are under 
-common
-      control with that entity. For the purposes of this definition,
-      "control" means (i) the power, direct or indirect, to cause the
-      direction or management of such entity, whether by contract or
-      otherwise, or (ii) ownership of fifty percent (50%) or more of 
-the
-      outstanding shares, or (iii) beneficial ownership of such 
-entity.
-      "You" (or "Your") shall mean an individual or Legal Entity
-      exercising permissions granted by this License.
-      "Source" form shall mean the preferred form for making 
-modifications,
-      including but not limited to software source code, documentation
-      source, and configuration files.
-      "Object" form shall mean any form resulting from mechanical
-      transformation or translation of a Source form, including but
-      not limited to compiled object code, generated documentation,
-      and conversions to other media types.
-      "Work" shall mean the work of authorship, whether in Source or
-      Object form, made available under the License, as indicated by a
-      copyright notice that is included in or attached to the work
-      (an example is provided in the Appendix below).
-      "Derivative Works" shall mean any work, whether in Source or 
-Object
-      form, that is based on (or derived from) the Work and for which 
-the
-      editorial revisions, annotations, elaborations, or other 
-modifications
-      represent, as a whole, an original work of authorship. For the 
-purposes
-      of this License, Derivative Works shall not include works that 
-remain
-      separable from, or merely link (or bind by name) to the 
-interfaces of,
-      the Work and Derivative Works thereof.
-      "Contribution" shall mean any work of authorship, including
-      the original version of the Work and any modifications or 
-additions
-      to that Work or Derivative Works thereof, that is intentionally
-      submitted to Licensor for inclusion in the Work by the copyright 
-owner
-      or by an individual or Legal Entity authorized to submit on 
-behalf of
-      the copyright owner. For the purposes of this definition, 
-"submitted"
-      means any form of electronic, verbal, or written communication 
-sent
-      to the Licensor or its representatives, including but not 
-limited to
-      communication on electronic mailing lists, source code control 
-systems,
-      and issue tracking systems that are managed by, or on behalf of, 
-the
-      Licensor for the purpose of discussing and improving the Work, 
-but
-      excluding communication that is conspicuously marked or 
-otherwise
-      designated in writing by the copyright owner as "Not a 
-Contribution."
-      "Contributor" shall mean Licensor and any individual or Legal 
-Entity
-      on behalf of whom a Contribution has been received by Licensor 
-and
-      subsequently incorporated within the Work.
-   2. Grant of Copyright License. Subject to the terms and conditions 
-of
-      this License, each Contributor hereby grants to You a perpetual,
-      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
-      copyright license to reproduce, prepare Derivative Works of,
-      publicly display, publicly perform, sublicense, and distribute 
-the
-      Work and such Derivative Works in Source or Object form.
-   3. Grant of Patent License. Subject to the terms and conditions of
-      this License, each Contributor hereby grants to You a perpetual,
-      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
-      (except as stated in this section) patent license to make, have 
-made,
-      use, offer to sell, sell, import, and otherwise transfer the 
-Work,
-      where such license applies only to those patent claims 
-licensable
-      by such Contributor that are necessarily infringed by their
-      Contribution(s) alone or by combination of their Contribution(s)
-      with the Work to which such Contribution(s) was submitted. If 
-You
-      institute patent litigation against any entity (including a
-      cross-claim or counterclaim in a lawsuit) alleging that the Work
-      or a Contribution incorporated within the Work constitutes 
-direct
-      or contributory patent infringement, then any patent licenses
-      granted to You under this License for that Work shall terminate
-      as of the date such litigation is filed.
-   4. Redistribution. You may reproduce and distribute copies of the
-      Work or Derivative Works thereof in any medium, with or without
-      modifications, and in Source or Object form, provided that You
-      meet the following conditions:
-      (a) You must give any other recipients of the Work or
-          Derivative Works a copy of this License; and
-      (b) You must cause any modified files to carry prominent notices
-          stating that You changed the files; and
-      (c) You must retain, in the Source form of any Derivative Works
-          that You distribute, all copyright, patent, trademark, and
-          attribution notices from the Source form of the Work,
-          excluding those notices that do not pertain to any part of
-          the Derivative Works; and
-      (d) If the Work includes a "NOTICE" text file as part of its
-          distribution, then any Derivative Works that You distribute 
-must
-          include a readable copy of the attribution notices contained
-          within such NOTICE file, excluding those notices that do not
-          pertain to any part of the Derivative Works, in at least one
-          of the following places: within a NOTICE text file 
-distributed
-          as part of the Derivative Works; within the Source form or
-          documentation, if provided along with the Derivative Works; 
-or,
-          within a display generated by the Derivative Works, if and
-          wherever such third-party notices normally appear. The 
-contents
-          of the NOTICE file are for informational purposes only and
-          do not modify the License. You may add Your own attribution
-          notices within Derivative Works that You distribute, 
-alongside
-          or as an addendum to the NOTICE text from the Work, provided
-          that such additional attribution notices cannot be construed
-          as modifying the License.
-      You may add Your own copyright statement to Your modifications 
-and
-      may provide additional or different license terms and conditions
-      for use, reproduction, or distribution of Your modifications, or
-      for any such Derivative Works as a whole, provided Your use,
-      reproduction, and distribution of the Work otherwise complies 
-with
-      the conditions stated in this License.
-   5. Submission of Contributions. Unless You explicitly state 
-otherwise,
-      any Contribution intentionally submitted for inclusion in the 
-Work
-      by You to the Licensor shall be under the terms and conditions 
-of
-      this License, without any additional terms or conditions.
-      Notwithstanding the above, nothing herein shall supersede or 
-modify
-      the terms of any separate license agreement you may have 
-executed
-      with Licensor regarding such Contributions.
-   6. Trademarks. This License does not grant permission to use the 
-trade
-      names, trademarks, service marks, or product names of the 
-Licensor,
-      except as required for reasonable and customary use in 
-describing the
-      origin of the Work and reproducing the content of the NOTICE 
-file.
-   7. Disclaimer of Warranty. Unless required by applicable law or
-      agreed to in writing, Licensor provides the Work (and each
-      Contributor provides its Contributions) on an "AS IS" BASIS,
-      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
-      implied, including, without limitation, any warranties or 
-conditions
-      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
-      PARTICULAR PURPOSE. You are solely responsible for determining 
-the
-      appropriateness of using or redistributing the Work and assume 
-any
-      risks associated with Your exercise of permissions under this 
-License.
-   8. Limitation of Liability. In no event and under no legal theory,
-      whether in tort (including negligence), contract, or otherwise,
-      unless required by applicable law (such as deliberate and 
-grossly
-      negligent acts) or agreed to in writing, shall any Contributor 
-be
-      liable to You for damages, including any direct, indirect, 
-special,
-      incidental, or consequential damages of any character arising as 
-a
-      result of this License or out of the use or inability to use the
-      Work (including but not limited to damages for loss of goodwill,
-      work stoppage, computer failure or malfunction, or any and all
-      other commercial damages or losses), even if such Contributor
-      has been advised of the possibility of such damages.
-   9. Accepting Warranty or Additional Liability. While redistributing
-      the Work or Derivative Works thereof, You may choose to offer,
-      and charge a fee for, acceptance of support, warranty, 
-indemnity,
-      or other liability obligations and/or rights consistent with 
-this
-      License. However, in accepting such obligations, You may act 
-only
-      on Your own behalf and on Your sole responsibility, not on 
-behalf
-      of any other Contributor, and only if You agree to indemnify,
-      defend, and hold each Contributor harmless for any liability
-      incurred by, or claims asserted against, such Contributor by 
-reason
-      of your accepting any such warranty or additional liability.
-   END OF TERMS AND CONDITIONS
-   APPENDIX: How to apply the Apache License to your work.
-      To apply the Apache License to your work, attach the following
-      boilerplate notice, with the fields enclosed by brackets "[]"
-      replaced with your own identifying information. (Don't include
-      the brackets!)  The text should be enclosed in the appropriate
-      comment syntax for the file format. We also recommend that a
-      file or class name and description of purpose be included on the
-      same "printed page" as the copyright notice for easier
-      identification within third-party archives.
-   Copyright [yyyy] [name of copyright owner]
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-       http://www.apache.org/licenses/LICENSE-2.0
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
-implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+Course Syllabus 
+CS/SE 2340.003–Computer Architecture
+Fall2025
+Course Information
+Prerequisites: CE/CS/TE 1337 or equivalent, and CE/CS/TE 2305 or equivalent.
+Class Time: Monday, and Wednesday, 10:00am - 11:15am (August 25, 2025-December 9, 2025)
+Class Location: ECSS 2.311
+Contact Information
+Instructor: Dr. Wafa Jaffal
+Email: wafa.jaffal@utdallas.edu
+Office: ECSS 4.201 (Virtual via MS team)
+Office Hours: M/W 12:00-1:00 pm, or by appointment (in-person or via MS-Teams)
+Grader:
+Grader Email: 
+Class Resources
+eLearning: The course website is hosted on eLearning, where you can access the syllabus, lecture slides, assignments, quizzes, grades, and announcements. You are responsible for checking the website regularly for any updates or changes.
+The course will be in person for lectures and discussions, and via MS teams if there is a need. You will need a stable internet connection, a webcam, and a microphone to participate. The MS Teams Invite will be posted on your team’s calendar.
+Email the grader for homework grading related questions only.
+Course Description
+This course introduces the basic concepts and principles of computer architecture, including instruction set design, datapath and control, pipelining, memory hierarchy, input/output, and parallelism. The course also covers the performance evaluation and optimization of computer systems, as well as the trade-offs between hardware and software. The course will use MIPS as an example of a RISC architecture, and will involve programming in assembly language.
+Student Learning Objectives/Outcomes
+By the end of this course, you will be able to:
+have an ability to represent numbers in and convert between decimal, binary, and hexadecimal and perform calculations using 2's complement arithmetic 
+understand the role of compilers, assemblers, and linkers and how programs are translated into machine language and executed 
+be able to program efficiently in an assembly level instruction set, including the use of addressing modes and data types 
+be able to write a fully functional, stand-alone medium size assembly language program (200~300 lines of code, e.g. a word-count program) 
+understand the basic model of a computer including the datapath, control, memory, and I/O components
+be able to demonstrate comprehension of a pipelined architectures including datapaths and hazards
+understand the memory hierarchy including caches and virtual memory 
+be able to demonstrate comprehension of computer performance measures and their estimation
+Required Textbook
+The required textbook for this course is:
+Book: David A. Patterson and John L. Hennessy, Computer Organization and Design: The Hardware/Software Interface, 6th Edition, Patterson and Hennessey, Morgan-Kaufmann, 2021.Make sure that you get the correct edition (for MIPS).
+RISC ASSEMBLER/SIMULATOR : This course uses the MARS MIPS assembler and simulator. MARS is available, free, for download from the Internet through the site:http://courses.missouristate.edu/kenvollmar/mars/.
+You are expected to read the assigned chapters before each class, and to bring the textbook to class for reference. The textbook also contains exercises and problems that you can use for self-study and practice.
+Class Schedule
+The following is a tentative schedule of the topics to be covered in this course, along with the corresponding textbook chapters and dates of the assignments and quizzes. The schedule is subject to change depending on the pace and progress of the class. Any changes will be announced on eLearning and during the class:
+
+
+Required Textbook & SW
+The required textbook for this course is:
+Book: David A. Patterson and John L. Hennessy, Computer Organization and Design: The Hardware/Software Interface, 6th Edition, Patterson and Hennessey, Morgan-Kaufmann, 2021.Make sure that you get the correct edition (for MIPS).
+*You are expected to read the assigned chapters before each class, and to bring the textbook to class for reference. The textbook also contains exercises and problems that you can use for self-study and practice.
+
+Other required Course Materials (SW):
+It is assumed you are familiar with the PC environment, can create and edit text
+files, run programs, etc.
+DOWNLOAD JAVA
+You will need to download Java for your platform by going to this website
+https://www.oracle.com/java/technologies/downloads/
+Download Java before you go to the next step to install MARS.
+MARS RISC ASSEMBLER/SIMULATOR
+The programs will be in assembly language for the MIPS processor. This course uses
+the MARS MIPS assembler and simulator. MARS is available, free, for download from
+eLearning.
+The MARS simulator can assemble MIPS assembly language source files, load and
+run them with a users console window for input/output, and debug them if they do
+not work properly.
+Special instructions on how to install MARS onto a MAC
+You need to allow Full Disk Access in your System Preferences in macOS. Here they mention that you need to search for 'JavaLauncher.app'. This is an issue due to macOS changes with security management. To give Full Disk Access to JAR files on macOS:
+1. Go to System Preferences.
+2. Click on Security and Privacy.
+3. Search for 'Full Disk Access'.
+4. Click on the lock at the bottom left to be able to make changes.
+5. Click on the '+' icon at the bottom left of the FDA panel and a Finder prompt will appear.
+6. Go to System/Library/CoreServices/JavaLauncher.app
+7. Select the JavaLauncher.app and click 'Open'
+Course & Instructor Policies
+Assignments must be turned in on the due date, by 11:59 pm (The link to submit will expire). Submit via eLearning and don’t submit via email.
+Late assignments are deducted by 20% if prior permission has been granted due to extenuating circumstances.
+No Makeup for Quizzes under any circumstances.
+Makeup exams are not given unless prior permission has been granted due to extenuating circumstances.
+There are no extra credit points or do-overs in this class.
+You are expected to attend all classes, participate in discussions, and complete all assignments and quizzes on time.
+You are expected to follow the academic integrity policy of the university, and to avoid any form of cheating, plagiarism, or collusion. Any violation of the policy will result in a zero grade for the assignment, quiz, or exam, and may also lead to further disciplinary actions.
+You are expected to respect the instructor, the TA, and your fellow classmates, and to maintain a professional and courteous behavior in class and online. Any form of harassment, discrimination, or disruption will not be tolerated.
+You are encouraged to seek help from me if you have any questions or difficulties with the course material, assignments, or quizzes. 
+You are responsible for checking your email, and eLearning regularly for any course-related announcements or updates.
+Grading Policy
+The grade will be based on a weighted score calculated by using the following table:
+
+Grades will be assigned according to the following table:
+		
+
+
+
+
+
+Exams: There will be three exams during the course: two midterms and a final exam. Up to 4 pages (not sheets) of handwritten cheat sheets can be used during an exam, but no books or slides are allowed. The midterm exams will be limited to material covered during the immediate unit, but the final exam is comprehensive. Test material will be taken mainly from classroom lectures.
+The exams will be hosted either in test centers or in class rooms via lockdown browsers. 
+https://ets.utdallas.edu/elearning-services/instructors/remote-teaching-resources/lockdown-browser/
+
+Programming assignments grading:
+Code Development 30% (compile w/o error)
+Program Execution 20% (run successfully)
+Program Design 25% (conform to spec)
+Documentation 15% (program, comments)
+Coding Style 10% (clear, efficient)
+
+
+

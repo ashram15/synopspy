@@ -1,6 +1,7 @@
 import React, { use, useEffect, useState } from 'react';
 import './App.css'
 import pdfIcon from './assets/pdf.png'
+import { useAuth0 } from "@auth0/auth0-react";
 import docxIcon from './assets/docx.png'
 import loadImg from './assets/animation.gif'
 
@@ -8,6 +9,35 @@ const Upload = () => {
     const [uploadResult, setUploadResult] = useState(null); //uploadResult = null initially 
     const [loading, setLoading] = useState(false); //loading set to false initially 
     const [pastUploads, setPastUploads] = useState([]); //pastUploads is set to an empty array 
+    const { getAccessTokenSilently } = useAuth0();
+
+    // Fetch past uploads when component mounts
+    useEffect(() => {
+        fetchPastUploads();
+    }, []);
+
+    async function fetchPastUploads() {
+        try {
+            const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+            const token = await getAccessTokenSilently({ audience: "https://synopspy-backend.com/api" });
+
+            const response = await fetch(`${BACKEND_URL}/uploads`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                const uploads = await response.json();
+                setPastUploads(uploads);
+            } else {
+                console.error("Failed to fetch past uploads:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Error fetching past uploads:", error);
+        }
+    }
 
     async function handleFileUpload(event) {
         const fileInput = document.querySelector('.file-input'); //will store a list of files in fileInput
@@ -26,10 +56,14 @@ const Upload = () => {
         setLoading(true);
 
         const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+        const token = await getAccessTokenSilently({ audience: "https://synopspy-backend.com/api" }); // Auth0 React hook
 
         try {
             const response = await fetch(`${BACKEND_URL}/upload`, {
                 method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
                 body: formData,
             });
 
@@ -39,7 +73,8 @@ const Upload = () => {
                 // alert("File Uploaded Successfully!");
                 //Update UI
                 setUploadResult(result);
-                setPastUploads(prev => [...prev, { name: file.name, type: file.type, extension: extension, data: result }]); // Store the uploaded file data in pastUploads
+                // Refresh past uploads to include the new upload
+                fetchPastUploads();
 
             } else {
                 console.error("File upload failed:", response.statusText);
@@ -52,6 +87,8 @@ const Upload = () => {
         } finally {
             setLoading(false);
         }
+
+        console.log("TOKEN", token)
 
     }
 
@@ -117,15 +154,19 @@ const Upload = () => {
                     <ul>
                         {pastUploads.map((upload, index) => {
                             let icon = pdfIcon; // Default icon
-                            if (upload.extension === "pdf") {
+                            const extension = upload.filename.split('.').pop().toLowerCase();
+                            if (extension === "pdf") {
                                 icon = pdfIcon;
-                            } else if (upload.extension === "docx" || upload.extension === "doc") {
+                            } else if (extension === "docx" || extension === "doc") {
                                 icon = docxIcon;
                             }
                             return (
-                                <li key={index} className="past-upload-item" onClick={() => setUploadResult(upload.data)}>
-                                    <img src={icon} alt={`${upload.extension} icon`} style={{ width: '20px', height: '20px' }} />
-                                    <span>{upload.name}</span>
+                                <li key={upload._id || index} className="past-upload-item" onClick={() => setUploadResult(upload.analysis)}>
+                                    <img src={icon} alt={`${extension} icon`} style={{ width: '20px', height: '20px' }} />
+                                    <span>{upload.filename}</span>
+                                    <small style={{ display: 'block', color: '#666' }}>
+                                        {new Date(upload.timestamp).toLocaleDateString()}
+                                    </small>
                                 </li>
                             );
                         })}

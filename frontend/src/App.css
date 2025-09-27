@@ -50,7 +50,8 @@ h1 {
   width: 100%;
 }
 
-.logoImg {
+.logoImg,
+.profileImg {
   width: 70px;
   height: 70px;
 }
@@ -77,6 +78,14 @@ h1 {
 .navBar a {
   text-decoration: none;
   color: #EBF9D9;
+}
+
+.navBar button {
+  background-color: #00BF63;
+  border: none;
+  color: #EBF9D9;
+  font-size: 20px;
+  cursor: pointer;
 }
 
 #features {
