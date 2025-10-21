@@ -1,4 +1,5 @@
 import './App.css';
+import './styles/modern.css';
 
 export default function Footer() {
     return (

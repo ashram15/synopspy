@@ -1,9 +1,11 @@
 import React, { use, useEffect, useState } from 'react';
 import './App.css'
+import './styles/modern.css'
 import pdfIcon from './assets/pdf.png'
 import { useAuth0 } from "@auth0/auth0-react";
 import docxIcon from './assets/docx.png'
 import loadImg from './assets/animation.gif'
+import { FiUpload, FiFileText, FiAward, FiShield, FiAlertCircle, FiHelpCircle } from 'react-icons/fi';
 
 const Upload = () => {
     const [uploadResult, setUploadResult] = useState(null); //uploadResult = null initially 
@@ -95,78 +97,103 @@ const Upload = () => {
     return (
         <section id="upload">
             {!uploadResult && !loading ? (
-                <>
-                    <input type="file" accept=".pdf, .doc, .docx" className="file-input" />
-                    <button onClick={handleFileUpload} className="uploadButton">Synopsize</button>
-                </>
+                <div className="upload-container">
+                    <div className="file-input-container">
+                        <FiUpload className="upload-icon pulse" />
+                        <p>Drop your file here or click to browse</p>
+                        <input type="file" accept=".pdf, .doc, .docx" className="file-input" />
+                    </div>
+                    <button onClick={handleFileUpload} className="uploadButton">
+                        <FiFileText className="button-icon" />
+                        Synopsize Document
+                    </button>
+                </div>
             ) : loading ? (
-                <>
-                    <div className="loading">
-                        <img src={loadImg} alt="Loading..." style={{ width: '400px', height: '300px' }}></img>
-                    </div>
-                </>
-
+                <div className="loading fade-in">
+                    <img src={loadImg} alt="Loading..." />
+                    <p className="loading-text">Analyzing your document...</p>
+                </div>
             ) : (
-                <>
+                <div className="analysis-container fade-in">
                     <div className="upload-result">
-                        <h2>Results</h2>
-                        <h3><strong>Topic: </strong>{uploadResult["topic"]}</h3>
-                        <h3><strong>Summary: </strong></h3>
-                        <p>{uploadResult["summary"]}</p>
-                        <h3><strong>Document Threat Analysis Rating:  </strong></h3>
-                        <p>{uploadResult["security_level"]}</p>
-                        <h3><strong>Concerning Language:</strong></h3>
-                        <ul>
-                            {uploadResult["concerning_language"].length > 0 ? (
-                                uploadResult["concerning_language"].map((phrase, index) => (
-                                    <li key={index}>{phrase}</li>
-                                ))
-                            ) : (
-                                <li>No concerning language found.</li>
-                            )}
-                        </ul>
-                        <h3><strong>Questions to ask:</strong></h3>
-                        <ul>
-                            {uploadResult["questions"].length > 0 ? (
-                                uploadResult["questions"].map((question, index) => (
-                                    <li key={index}>{question}</li>
-                                ))
-                            ) : (
-                                <li>No questions to ask.</li>
-                            )}
-                        </ul>
+                        <h2 className="result-title">Document Analysis Results</h2>
 
+                        <div className="result-section topic-section">
+                            <h3><FiAward className="section-icon" /> Topic</h3>
+                            <p className="topic-text">{uploadResult["topic"]}</p>
+                        </div>
+
+                        <div className="result-section summary-section">
+                            <h3><FiFileText className="section-icon" /> Summary</h3>
+                            <p className="summary-text">{uploadResult["summary"]}</p>
+                        </div>
+
+                        <div className="result-section security-section">
+                            <h3><FiShield className="section-icon" /> Security Analysis</h3>
+                            <p className="security-level">{uploadResult["security_level"]}</p>
+                        </div>
+
+                        <div className="result-section concerns-section">
+                            <h3><FiAlertCircle className="section-icon" /> Concerning Language</h3>
+                            <ul className="concerns-list">
+                                {uploadResult["concerning_language"].length > 0 ? (
+                                    uploadResult["concerning_language"].map((phrase, index) => (
+                                        <li key={index} className="concern-item">{phrase}</li>
+                                    ))
+                                ) : (
+                                    <li className="no-concerns">No concerning language found.</li>
+                                )}
+                            </ul>
+                        </div>
+
+                        <div className="result-section questions-section">
+                            <h3><FiHelpCircle className="section-icon" /> Questions to Consider</h3>
+                            <ul className="questions-list">
+                                {uploadResult["questions"].length > 0 ? (
+                                    uploadResult["questions"].map((question, index) => (
+                                        <li key={index} className="question-item">{question}</li>
+                                    ))
+                                ) : (
+                                    <li className="no-questions">No questions to ask.</li>
+                                )}
+                            </ul>
+                        </div>
                     </div>
 
-                    <input type="file" accept=".pdf, .doc, .docx" className="file-input" />
-                    <button onClick={handleFileUpload} className="uploadButton">Synopsize Again</button>
-
-                </>
-
+                    <div className="new-upload-container">
+                        <div className="file-input-container">
+                            <FiUpload className="upload-icon" />
+                            <input type="file" accept=".pdf, .doc, .docx" className="file-input" />
+                        </div>
+                        <button onClick={handleFileUpload} className="uploadButton">
+                            <FiFileText className="button-icon" />
+                            Synopsize Another Document
+                        </button>
+                    </div>
+                </div>
             )}
 
             <div className="past-uploads">
-                <h3>Past Uploads</h3>
+                <h3><FiFileText className="section-icon" /> Past Uploads</h3>
                 {pastUploads.length === 0 ? (
-                    <p>No past uploads</p>
+                    <p className="no-uploads">No past uploads</p>
                 ) : (
-
-                    <ul>
+                    <ul className="uploads-list">
                         {pastUploads.map((upload, index) => {
-                            let icon = pdfIcon; // Default icon
-                            const extension = upload.filename.split('.').pop().toLowerCase();
-                            if (extension === "pdf") {
-                                icon = pdfIcon;
-                            } else if (extension === "docx" || extension === "doc") {
-                                icon = docxIcon;
-                            }
+                            let icon = upload.filename.toLowerCase().endsWith('.pdf') ? pdfIcon : docxIcon;
                             return (
-                                <li key={upload._id || index} className="past-upload-item" onClick={() => setUploadResult(upload.analysis)}>
-                                    <img src={icon} alt={`${extension} icon`} style={{ width: '20px', height: '20px' }} />
-                                    <span>{upload.filename}</span>
-                                    <small style={{ display: 'block', color: '#666' }}>
-                                        {new Date(upload.timestamp).toLocaleDateString()}
-                                    </small>
+                                <li
+                                    key={upload._id || index}
+                                    className="past-upload-item"
+                                    onClick={() => setUploadResult(upload.analysis)}
+                                >
+                                    <img src={icon} alt={`${upload.filename.split('.').pop()} icon`} className="file-icon" />
+                                    <div className="upload-info">
+                                        <span className="filename">{upload.filename}</span>
+                                        <small className="timestamp">
+                                            {new Date(upload.timestamp).toLocaleDateString()}
+                                        </small>
+                                    </div>
                                 </li>
                             );
                         })}

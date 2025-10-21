@@ -1,0 +1,359 @@
+/* Modern UI Enhancement for SynopSpy */
+
+:root {
+    --primary: #00BF63;
+    --secondary: #EBF9D9;
+    --text: #545454;
+    --accent: #D9EFBD;
+    --hover: rgba(0, 191, 99, 0.1);
+}
+
+* {
+    box-sizing: border-box;
+    font-family: 'League Spartan', sans-serif;
+    margin: 0;
+    padding: 0;
+    transition: all 0.3s ease;
+}
+
+body {
+    background-color: var(--secondary);
+    margin: 0;
+}
+
+/* Enhanced Header Styles */
+.header {
+    background-color: var(--primary);
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 2rem;
+    background-color: var(--primary);
+}
+
+.logoImg,
+.profileImg {
+    width: 70px;
+    height: 70px;
+    transition: transform 0.3s ease;
+}
+
+.logoImg:hover,
+.profileImg:hover {
+    transform: scale(1.1);
+}
+
+.navBar ul {
+    display: flex;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.navBar li {
+    position: relative;
+}
+
+.navBar a {
+    text-decoration: none;
+    color: var(--secondary);
+    font-size: 1.2rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+}
+
+.navBar a:hover {
+    background-color: rgba(235, 249, 217, 0.1);
+}
+
+.navBar button {
+    background-color: transparent;
+    border: 2px solid var(--secondary);
+    color: var(--secondary);
+    font-size: 1.2rem;
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.navBar button:hover {
+    background-color: var(--secondary);
+    color: var(--primary);
+}
+
+/* Upload Section Styles */
+#upload {
+    min-height: calc(100vh - 140px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    gap: 2rem;
+}
+
+.upload-container {
+    width: 100%;
+    max-width: 800px;
+    background-color: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    animation: slideUp 0.5s ease;
+}
+
+.file-input-container {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    border: 2px dashed var(--primary);
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 2rem;
+}
+
+.file-input-container:hover {
+    background-color: var(--hover);
+}
+
+.file-input {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.upload-icon {
+    font-size: 3rem;
+    color: var(--primary);
+}
+
+.uploadButton {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 1rem 3rem;
+    font-size: 1.2rem;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 191, 99, 0.3);
+    transition: all 0.3s ease;
+}
+
+.uploadButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 191, 99, 0.4);
+}
+
+/* Results Section */
+.upload-result {
+    width: 100%;
+    max-width: 800px;
+    background-color: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    animation: slideUp 0.5s ease;
+}
+
+.upload-result h2 {
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+}
+
+.upload-result h3 {
+    color: var(--primary);
+    margin-top: 1.5rem;
+    font-size: 1.3rem;
+}
+
+.upload-result p,
+.upload-result ul li {
+    color: var(--text);
+    line-height: 1.6;
+    margin: 1rem 0;
+}
+
+.upload-result ul {
+    list-style: none;
+    padding-left: 1rem;
+}
+
+.upload-result ul li {
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.upload-result ul li:before {
+    content: "•";
+    color: var(--primary);
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}
+
+/* Past Uploads Section */
+.past-uploads {
+    width: 100%;
+    max-width: 800px;
+    background-color: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.past-uploads h3 {
+    color: var(--primary);
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.past-upload-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    border-radius: 10px;
+    background-color: var(--secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.past-upload-item:hover {
+    transform: translateX(10px);
+    background-color: var(--accent);
+}
+
+.past-upload-item img {
+    width: 30px;
+    height: 30px;
+    margin-right: 1rem;
+}
+
+.past-upload-item span {
+    flex: 1;
+    color: var(--text);
+}
+
+.past-upload-item small {
+    color: var(--text);
+    opacity: 0.7;
+}
+
+/* Loading Animation */
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.loading img {
+    animation: pulse 2s infinite;
+}
+
+/* Animations */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: scale(1.05);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navBar {
+        padding: 0.5rem 1rem;
+    }
+
+    .navBar ul {
+        gap: 1rem;
+    }
+
+    .upload-container,
+    .upload-result,
+    .past-uploads {
+        padding: 1.5rem;
+    }
+
+    .uploadButton {
+        padding: 0.8rem 2rem;
+        font-size: 1rem;
+    }
+}
+
+/* Footer Enhancement */
+#footer {
+    background-color: var(--primary);
+    color: var(--secondary);
+    text-align: center;
+    padding: 1.5rem;
+    margin-top: auto;
+    box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--secondary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text);
+}

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import report from './assets/report.png'
 import './App.css'
+import './styles/modern.css'
 import Typewriter from 'typewriter-effect'
 
 const Features = () => {

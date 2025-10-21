@@ -1,5 +1,6 @@
 import mainLogo from './assets/SynopSpy.png'
 import './App.css'
+import './styles/modern.css'
 
 const MainPage = () => {
     return (

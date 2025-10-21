@@ -1,5 +1,6 @@
 import logo from './assets/logo.png'
 import './App.css'
+import './styles/modern.css'
 import LoginButton from './LoginButton'
 import LogoutButton from './LogoutButton'
 import Profile from './Profile'

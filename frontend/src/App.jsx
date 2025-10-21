@@ -4,6 +4,7 @@ import Features from './Features'
 import Upload from './Upload'
 import Footer from './Footer'
 import './App.css'
+import './styles/modern.css'
 
 function App() {
   return (

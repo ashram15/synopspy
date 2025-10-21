@@ -1,97 +1,19 @@
+/* Base styles */
 * {
   box-sizing: border-box;
   font-family: 'League Spartan', sans-serif;
 }
 
-body {
-  background-color: #EBF9D9;
-  margin: 0;
-}
-
+/* Basic page layout */
 #main {
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid #00BF63;
-}
-
-
-h1 {
-  color: #00BF63;
-  font-size: 10vw;
-  text-align: center;
-}
-
-.fadeInImg {
-  animation: fadeIn 3s;
-}
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 1;
-  }
-
-}
-
-.fadeInImg img {
-  align-items: center;
-  margin: auto;
-  width: 700px;
-}
-
-.header {
-  background-color: #00BF63;
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-}
-
-.logoImg,
-.profileImg {
-  width: 70px;
-  height: 70px;
-}
-
-.navBar {
-  display: flex;
-  justify-content: space-between;
-  background-color: #00BF63;
-}
-
-.navBar ul {
-  display: flex;
-  gap: 1.4rem;
-  margin-right: 50px;
-  list-style: none;
-}
-
-.navBar li {
-  margin-right: 1rem;
-  font-size: 20px;
-  margin: auto;
-}
-
-.navBar a {
-  text-decoration: none;
-  color: #EBF9D9;
-}
-
-.navBar button {
-  background-color: #00BF63;
-  border: none;
-  color: #EBF9D9;
-  font-size: 20px;
-  cursor: pointer;
 }
 
 #features {
   display: flex;
   align-items: center;
-  border: 1px solid #00BF63;
 }
 
 #about {
@@ -105,11 +27,17 @@ h1 {
 
 #demo {
   color: darkgreen;
-  margin-top: 0px;
   margin: 20px auto;
   max-width: 50%;
   height: 100vh;
   display: block;
+}
+
+/* Demo image styles */
+.fadeInImg img {
+  align-items: center;
+  margin: auto;
+  width: 700px;
 }
 
 #demo img {
@@ -119,91 +47,12 @@ h1 {
   animation: fadeIn 3s;
 }
 
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
 
-#upload {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid #00BF63;
-}
-
-.upload-result {
-  width: 100%;
-  max-width: 700px;
-  border-radius: 20px;
-  margin: 20px auto;
-  padding: 20px;
-  background-color: white;
-  color: #048748;
-}
-
-.upload-result p {
-  color: #545454;
-}
-
-.upload-result ul li {
-  color: #545454;
-}
-
-.loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-
-.uploadButton,
-.file-input {
-  width: auto;
-  padding: 15px 80px;
-  border: none;
-  color: #545454;
-  font-size: 20px;
-  border-radius: 20px;
-  background-color: #00BF63;
-  margin: 20px;
-}
-
-.uploadButton:hover {
-  background-color: #545454;
-  color: #EBF9D9;
-}
-
-#upload img {
-  width: 47px;
-  height: 60px;
-}
-
-.list-icon-pdf {
-  margin-right: 10px;
-}
-
-.past-uploads {
-  width: 100%;
-  max-width: 700px;
-  border-radius: 20px;
-  margin: 20px auto;
-  background-color: #D9EFBD;
-  color: #545454;
-  align-items: flex-end;
-}
-
-.past-uploads h3 {
-  text-align: center;
-}
-
-.past-uploads ul li {
-  list-style: none;
-}
-
-
-#footer {
-  background-color: #00BF63;
-  color: #D9EFBD;
-  text-align: center;
-  padding: 5px;
-  position: relative;
-  bottom: 0;
-  width: 100%;
+  100% {
+    opacity: 1;
+  }
 }
