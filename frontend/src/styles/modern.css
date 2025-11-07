@@ -8,6 +8,59 @@
     --hover: rgba(0, 191, 99, 0.1);
 }
 
+/* Logo Styles */
+.logo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+    animation: fadeIn 1s ease-out;
+}
+
+.logo-text {
+    font-size: 8vw;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    text-transform: uppercase;
+    gap: 0;
+    letter-spacing: -0.1em;
+}
+
+.syn {
+    color: var(--primary);
+    text-shadow: 2px 2px 4px rgba(0, 191, 99, 0.2);
+    margin-right: -0.4em;
+}
+
+.op-image {
+    height: 8vw;
+    margin: 0 -0.4em;
+    object-fit: contain;
+}
+
+.spy {
+    color: var(--text);
+    background: linear-gradient(135deg, var(--primary) 0%, #048748 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: none;
+}
+
+.logo-subtitle {
+    font-size: 1.5rem;
+    color: var(--text);
+    opacity: 0.8;
+    text-align: center;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    animation: fadeIn 1s ease-out 0.5s both;
+}
+
 * {
     box-sizing: border-box;
     font-family: 'League Spartan', sans-serif;
