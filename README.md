@@ -49,10 +49,7 @@ documents. Some examples of documents SynopSpy helps analyze are legal fine prin
 <!-- 4. Access the App
     - Go to browser and access frontend through <code>localhost:5173</code> -->
 
-## ⚠️ Usage Notice
-This project was created by me (Aishwarya-ashram15) as a personal project.
 
-All Rights Reserved. 
 
 
 
