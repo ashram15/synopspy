@@ -5,7 +5,7 @@ documents. Some examples of documents SynopSpy helps analyze are legal fine prin
 📝<strong>Note:</strong> Synopspy is hosted on Render's free-tier. Render's server may go to sleep after a period of inactivity. Thus, <strong>the first request on Synopspy might take 1-2 minutes to load</strong> as Render's server wakes up. <strong>The subsequent requests will be much faster!</strong>
 
 ## Live Application: https://synopspy.onrender.com
-![synopspy_demo.gif](frontend/src/assets/synopspy_demo.gif)
+![synopspy_demo.gif](frontend/src/assets/synopspy2.0.gif)
 
 ## Key Features
 - <strong>AI-Powered Summarization and Risk Analysis:</strong> Leverages <strong>Google's Gemini API </strong> to perform complex NLP tasks, including large document summarization and content risk analysis. Detects complex legal language and highlights sections in the document that require increased oversight. 
