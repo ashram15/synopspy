@@ -1,20 +1,29 @@
 import React, { use, useEffect, useState } from 'react';
 import './App.css'
+import './styles/modern.css'
 import pdfIcon from './assets/pdf.png'
 import { useAuth0 } from "@auth0/auth0-react";
 import docxIcon from './assets/docx.png'
 import loadImg from './assets/animation.gif'
+import { FiUpload, FiFileText, FiAward, FiShield, FiAlertCircle, FiHelpCircle, FiEye } from 'react-icons/fi';
+import mammoth from 'mammoth';
 
 const Upload = () => {
-    const [uploadResult, setUploadResult] = useState(null); //uploadResult = null initially 
-    const [loading, setLoading] = useState(false); //loading set to false initially 
-    const [pastUploads, setPastUploads] = useState([]); //pastUploads is set to an empty array 
-    const { getAccessTokenSilently } = useAuth0();
+    const [uploadResult, setUploadResult] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [pastUploads, setPastUploads] = useState([]);
+    const [uploadedFile, setUploadedFile] = useState(null);
+    const [filePreviewUrl, setFilePreviewUrl] = useState(null);
+    const [docxPreviewHtml, setDocxPreviewHtml] = useState(null);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const { getAccessTokenSilently, isAuthenticated } = useAuth0();
 
-    // Fetch past uploads when component mounts
+    // Fetch past uploads when component mounts (only if authenticated)
     useEffect(() => {
-        fetchPastUploads();
-    }, []);
+        if (isAuthenticated) {
+            fetchPastUploads();
+        }
+    }, [isAuthenticated]);
 
     async function fetchPastUploads() {
         try {
@@ -39,140 +48,281 @@ const Upload = () => {
         }
     }
 
+    function handleFileSelect(event) {
+        const file = event.target.files[0];
+        setSelectedFile(file);
+    }
+
     async function handleFileUpload(event) {
-        const fileInput = document.querySelector('.file-input'); //will store a list of files in fileInput
-        const file = fileInput.files[0]; //so we need the exact file in the list of files
+        const file = selectedFile || document.querySelector('.file-input').files[0];
 
         if (!file) {
             alert("Please select a file to upload.");
             return;
         }
 
-        const extension = file.name.split('.').pop().toLowerCase(); // Get the file extension
+        // Store uploaded file info
+        setUploadedFile(file);
+
+        // Create preview based on file type
+        if (file.type === 'application/pdf') {
+            const url = URL.createObjectURL(file);
+            setFilePreviewUrl(url);
+            setDocxPreviewHtml(null); // Clear any previous DOCX preview
+        } else if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || file.name.toLowerCase().endsWith('.docx')) {
+            // Convert DOCX to HTML for preview
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const result = await mammoth.convertToHtml({ arrayBuffer });
+                setDocxPreviewHtml(result.value);
+                setFilePreviewUrl(null); // Clear any previous PDF preview
+            } catch (error) {
+                console.error('Error converting DOCX:', error);
+                setDocxPreviewHtml('<p>Error loading DOCX preview</p>');
+            }
+        } else {
+            // For other file types, clear previews
+            setFilePreviewUrl(null);
+            setDocxPreviewHtml(null);
+        }
 
         const formData = new FormData();
-        formData.append('file', file); //"file" is the key expected by the backend
-
+        formData.append('file', file);
         setLoading(true);
 
         const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-        const token = await getAccessTokenSilently({ audience: "https://synopspy-backend.com/api" }); // Auth0 React hook
 
         try {
+            // Prepare headers - only add Authorization if user is authenticated
+            const headers = {};
+            if (isAuthenticated) {
+                const token = await getAccessTokenSilently({ audience: "https://synopspy-backend.com/api" });
+                headers.Authorization = `Bearer ${token}`;
+            }
+
             const response = await fetch(`${BACKEND_URL}/upload`, {
                 method: "POST",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+                headers: headers,
                 body: formData,
             });
 
             if (response.ok) {
                 const result = await response.json();
-                console.log(result)
-                // alert("File Uploaded Successfully!");
-                //Update UI
-                setUploadResult(result);
-                // Refresh past uploads to include the new upload
-                fetchPastUploads();
+                console.log("Upload result:", result);
 
+                // Check if there's an error in the response
+                if (result.error) {
+                    if (result.error.includes('503') || result.error.includes('overloaded')) {
+                        alert("The AI service is currently overloaded. Please try again in a few moments.");
+                    } else {
+                        alert("Analysis failed: " + result.error);
+                    }
+                    setLoading(false);
+                    return;
+                }
+
+                setUploadResult(result);
+                // Only fetch past uploads if authenticated
+                if (isAuthenticated) {
+                    fetchPastUploads();
+                }
             } else {
                 console.error("File upload failed:", response.statusText);
                 alert("File Upload Failed. Please try again.");
             }
         } catch (error) {
-
             console.error("Error uploading file:", error);
             alert("An error occurred while uploading the file. Please try again.");
         } finally {
             setLoading(false);
         }
-
-        console.log("TOKEN", token)
-
     }
 
     return (
         <section id="upload">
             {!uploadResult && !loading ? (
-                <>
-                    <input type="file" accept=".pdf, .doc, .docx" className="file-input" />
-                    <button onClick={handleFileUpload} className="uploadButton">Synopsize</button>
-                </>
+                <div className="upload-container">
+                    <div className="file-input-container">
+                        <FiUpload className="upload-icon pulse" />
+                        <p>Drop your file here or click to browse</p>
+                        <input
+                            type="file"
+                            accept=".pdf, .doc, .docx"
+                            className="file-input"
+                            onChange={handleFileSelect}
+                        />
+                    </div>
+
+                    {selectedFile && (
+                        <div className="selected-file-preview">
+                            <div className="selected-file-info">
+                                <img
+                                    src={selectedFile.name.toLowerCase().endsWith('.pdf') ? pdfIcon : docxIcon}
+                                    alt="File type"
+                                    className="file-type-icon"
+                                />
+                                <div className="file-details">
+                                    <span className="filename">{selectedFile.name}</span>
+                                    <span className="filesize">{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</span>
+                                </div>
+                                <button
+                                    className="remove-file-btn"
+                                    onClick={() => setSelectedFile(null)}
+                                    type="button"
+                                >
+                                    <FiAlertCircle />
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="upload-button-container">
+                        <button
+                            onClick={handleFileUpload}
+                            className="uploadButton"
+                            disabled={!selectedFile}
+                        >
+                            <FiFileText className="button-icon" />
+                            Synopsize Document
+                        </button>
+                    </div>
+                </div>
             ) : loading ? (
-                <>
-                    <div className="loading">
-                        <img src={loadImg} alt="Loading..." style={{ width: '400px', height: '300px' }}></img>
-                    </div>
-                </>
-
+                <div className="loading">
+                    <img src={loadImg} alt="Loading..." className="loading-animation" />
+                </div>
             ) : (
-                <>
-                    <div className="upload-result">
-                        <h2>Results</h2>
-                        <h3><strong>Topic: </strong>{uploadResult["topic"]}</h3>
-                        <h3><strong>Summary: </strong></h3>
-                        <p>{uploadResult["summary"]}</p>
-                        <h3><strong>Document Threat Analysis Rating:  </strong></h3>
-                        <p>{uploadResult["security_level"]}</p>
-                        <h3><strong>Concerning Language:</strong></h3>
-                        <ul>
-                            {uploadResult["concerning_language"].length > 0 ? (
-                                uploadResult["concerning_language"].map((phrase, index) => (
-                                    <li key={index}>{phrase}</li>
-                                ))
-                            ) : (
-                                <li>No concerning language found.</li>
-                            )}
-                        </ul>
-                        <h3><strong>Questions to ask:</strong></h3>
-                        <ul>
-                            {uploadResult["questions"].length > 0 ? (
-                                uploadResult["questions"].map((question, index) => (
-                                    <li key={index}>{question}</li>
-                                ))
-                            ) : (
-                                <li>No questions to ask.</li>
-                            )}
-                        </ul>
+                <div className="analysis-container fade-in">
+                    {uploadResult ? (
+                        <>
+                            <h2 className="result-title">Document Analysis Results</h2>
+                            <div className="results-layout">
+                                {/* Document Preview Column */}
+                                <div className="document-preview-column">
+                                    <div className="document-viewer">
+                                        {uploadedFile && uploadedFile.type === 'application/pdf' && filePreviewUrl ? (
+                                            <iframe
+                                                src={filePreviewUrl}
+                                                title="Document Preview"
+                                                className="pdf-preview"
+                                            />
+                                        ) : uploadedFile && docxPreviewHtml ? (
+                                            <div
+                                                className="docx-preview"
+                                                dangerouslySetInnerHTML={{ __html: docxPreviewHtml }}
+                                            />
+                                        ) : (
+                                            <div className="preview-placeholder">
+                                                <img src={docxIcon} alt="Document" className="preview-icon" />
+                                                <p className="preview-text">
+                                                    {uploadedFile?.name || "Document"} preview
+                                                </p>
+                                                <small>Document preview not available</small>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
 
+                                {/* Analysis Results Column */}
+                                <div className="analysis-results-column">
+                                    <div className="report-card">
+                                        <div className="report-section">
+                                            <h3 className="report-heading">Topic:</h3>
+                                            <p className="report-text">{uploadResult?.topic || "No topic available"}</p>
+                                        </div>
+
+                                        <div className="report-section">
+                                            <h3 className="report-heading">Summary</h3>
+                                            <p className="report-text">{uploadResult?.summary || "No summary available"}</p>
+                                        </div>
+
+                                        <div className="report-section">
+                                            <h3 className="report-heading">Document Threat Analysis Rating</h3>
+                                            <p className="report-text">{uploadResult?.security_level || "No security analysis available"}</p>
+                                        </div>
+
+                                        <div className="report-section">
+                                            <h3 className="report-heading">Concerning Language</h3>
+                                            <div className="report-text">
+                                                {uploadResult?.concerning_language && Array.isArray(uploadResult.concerning_language) && uploadResult.concerning_language.length > 0 ? (
+                                                    <ul className="report-list">
+                                                        {uploadResult.concerning_language.map((phrase, index) => (
+                                                            <li key={index}>{phrase}</li>
+                                                        ))}
+                                                    </ul>
+                                                ) : (
+                                                    <p>No concerning language found.</p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <div className="report-section">
+                                            <h3 className="report-heading">Questions to Ask</h3>
+                                            <div className="report-text">
+                                                {uploadResult?.questions && Array.isArray(uploadResult.questions) && uploadResult.questions.length > 0 ? (
+                                                    <ul className="report-list">
+                                                        {uploadResult.questions.map((question, index) => (
+                                                            <li key={index}>{question}</li>
+                                                        ))}
+                                                    </ul>
+                                                ) : (
+                                                    <p>No questions to ask.</p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+
+                    ) : (
+                        <div className="error-message">
+                            <p>No results available. Please try uploading again.</p>
+                        </div>
+                    )}
+
+                    <div className="new-upload-container">
+                        <div className="file-input-container">
+                            <FiUpload className="upload-icon" />
+                            <input type="file" accept=".pdf, .doc, .docx" className="file-input" />
+                        </div>
+                        <button onClick={handleFileUpload} className="uploadButton">
+                            <FiFileText className="button-icon" />
+                            Analyze Another Document
+                        </button>
                     </div>
-
-                    <input type="file" accept=".pdf, .doc, .docx" className="file-input" />
-                    <button onClick={handleFileUpload} className="uploadButton">Synopsize Again</button>
-
-                </>
-
+                </div>
             )}
 
-            <div className="past-uploads">
-                <h3>Past Uploads</h3>
-                {pastUploads.length === 0 ? (
-                    <p>No past uploads</p>
-                ) : (
-
-                    <ul>
-                        {pastUploads.map((upload, index) => {
-                            let icon = pdfIcon; // Default icon
-                            const extension = upload.filename.split('.').pop().toLowerCase();
-                            if (extension === "pdf") {
-                                icon = pdfIcon;
-                            } else if (extension === "docx" || extension === "doc") {
-                                icon = docxIcon;
-                            }
-                            return (
-                                <li key={upload._id || index} className="past-upload-item" onClick={() => setUploadResult(upload.analysis)}>
-                                    <img src={icon} alt={`${extension} icon`} style={{ width: '20px', height: '20px' }} />
-                                    <span>{upload.filename}</span>
-                                    <small style={{ display: 'block', color: '#666' }}>
-                                        {new Date(upload.timestamp).toLocaleDateString()}
-                                    </small>
-                                </li>
-                            );
-                        })}
-                    </ul>
-                )}
-            </div>
+            {isAuthenticated && (
+                <div className="past-uploads">
+                    <h3><FiFileText className="section-icon" /> Past Uploads</h3>
+                    {pastUploads.length === 0 ? (
+                        <p className="no-uploads">No past uploads</p>
+                    ) : (
+                        <ul className="uploads-list">
+                            {pastUploads.map((upload, index) => {
+                                let icon = upload.filename.toLowerCase().endsWith('.pdf') ? pdfIcon : docxIcon;
+                                return (
+                                    <li
+                                        key={upload._id || index}
+                                        className="past-upload-item"
+                                        onClick={() => setUploadResult(upload.analysis)}
+                                    >
+                                        <img src={icon} alt={`${upload.filename.split('.').pop()} icon`} className="file-icon" />
+                                        <div className="upload-info">
+                                            <span className="filename">{upload.filename}</span>
+                                            <small className="timestamp">
+                                                {new Date(upload.timestamp).toLocaleDateString()}
+                                            </small>
+                                        </div>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    )}
+                </div>
+            )}
         </section>
     );
 }

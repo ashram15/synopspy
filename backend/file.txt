@@ -1,101 +1,141 @@
-Course Syllabus 
-CS/SE 2340.003–Computer Architecture
-Fall2025
-Course Information
-Prerequisites: CE/CS/TE 1337 or equivalent, and CE/CS/TE 2305 or equivalent.
-Class Time: Monday, and Wednesday, 10:00am - 11:15am (August 25, 2025-December 9, 2025)
-Class Location: ECSS 2.311
-Contact Information
-Instructor: Dr. Wafa Jaffal
-Email: wafa.jaffal@utdallas.edu
-Office: ECSS 4.201 (Virtual via MS team)
-Office Hours: M/W 12:00-1:00 pm, or by appointment (in-person or via MS-Teams)
-Grader:
-Grader Email: 
-Class Resources
-eLearning: The course website is hosted on eLearning, where you can access the syllabus, lecture slides, assignments, quizzes, grades, and announcements. You are responsible for checking the website regularly for any updates or changes.
-The course will be in person for lectures and discussions, and via MS teams if there is a need. You will need a stable internet connection, a webcam, and a microphone to participate. The MS Teams Invite will be posted on your team’s calendar.
-Email the grader for homework grading related questions only.
-Course Description
-This course introduces the basic concepts and principles of computer architecture, including instruction set design, datapath and control, pipelining, memory hierarchy, input/output, and parallelism. The course also covers the performance evaluation and optimization of computer systems, as well as the trade-offs between hardware and software. The course will use MIPS as an example of a RISC architecture, and will involve programming in assembly language.
-Student Learning Objectives/Outcomes
-By the end of this course, you will be able to:
-have an ability to represent numbers in and convert between decimal, binary, and hexadecimal and perform calculations using 2's complement arithmetic 
-understand the role of compilers, assemblers, and linkers and how programs are translated into machine language and executed 
-be able to program efficiently in an assembly level instruction set, including the use of addressing modes and data types 
-be able to write a fully functional, stand-alone medium size assembly language program (200~300 lines of code, e.g. a word-count program) 
-understand the basic model of a computer including the datapath, control, memory, and I/O components
-be able to demonstrate comprehension of a pipelined architectures including datapaths and hazards
-understand the memory hierarchy including caches and virtual memory 
-be able to demonstrate comprehension of computer performance measures and their estimation
-Required Textbook
-The required textbook for this course is:
-Book: David A. Patterson and John L. Hennessy, Computer Organization and Design: The Hardware/Software Interface, 6th Edition, Patterson and Hennessey, Morgan-Kaufmann, 2021.Make sure that you get the correct edition (for MIPS).
-RISC ASSEMBLER/SIMULATOR : This course uses the MARS MIPS assembler and simulator. MARS is available, free, for download from the Internet through the site:http://courses.missouristate.edu/kenvollmar/mars/.
-You are expected to read the assigned chapters before each class, and to bring the textbook to class for reference. The textbook also contains exercises and problems that you can use for self-study and practice.
-Class Schedule
-The following is a tentative schedule of the topics to be covered in this course, along with the corresponding textbook chapters and dates of the assignments and quizzes. The schedule is subject to change depending on the pace and progress of the class. Any changes will be announced on eLearning and during the class:
-
-
-Required Textbook & SW
-The required textbook for this course is:
-Book: David A. Patterson and John L. Hennessy, Computer Organization and Design: The Hardware/Software Interface, 6th Edition, Patterson and Hennessey, Morgan-Kaufmann, 2021.Make sure that you get the correct edition (for MIPS).
-*You are expected to read the assigned chapters before each class, and to bring the textbook to class for reference. The textbook also contains exercises and problems that you can use for self-study and practice.
-
-Other required Course Materials (SW):
-It is assumed you are familiar with the PC environment, can create and edit text
-files, run programs, etc.
-DOWNLOAD JAVA
-You will need to download Java for your platform by going to this website
-https://www.oracle.com/java/technologies/downloads/
-Download Java before you go to the next step to install MARS.
-MARS RISC ASSEMBLER/SIMULATOR
-The programs will be in assembly language for the MIPS processor. This course uses
-the MARS MIPS assembler and simulator. MARS is available, free, for download from
-eLearning.
-The MARS simulator can assemble MIPS assembly language source files, load and
-run them with a users console window for input/output, and debug them if they do
-not work properly.
-Special instructions on how to install MARS onto a MAC
-You need to allow Full Disk Access in your System Preferences in macOS. Here they mention that you need to search for 'JavaLauncher.app'. This is an issue due to macOS changes with security management. To give Full Disk Access to JAR files on macOS:
-1. Go to System Preferences.
-2. Click on Security and Privacy.
-3. Search for 'Full Disk Access'.
-4. Click on the lock at the bottom left to be able to make changes.
-5. Click on the '+' icon at the bottom left of the FDA panel and a Finder prompt will appear.
-6. Go to System/Library/CoreServices/JavaLauncher.app
-7. Select the JavaLauncher.app and click 'Open'
-Course & Instructor Policies
-Assignments must be turned in on the due date, by 11:59 pm (The link to submit will expire). Submit via eLearning and don’t submit via email.
-Late assignments are deducted by 20% if prior permission has been granted due to extenuating circumstances.
-No Makeup for Quizzes under any circumstances.
-Makeup exams are not given unless prior permission has been granted due to extenuating circumstances.
-There are no extra credit points or do-overs in this class.
-You are expected to attend all classes, participate in discussions, and complete all assignments and quizzes on time.
-You are expected to follow the academic integrity policy of the university, and to avoid any form of cheating, plagiarism, or collusion. Any violation of the policy will result in a zero grade for the assignment, quiz, or exam, and may also lead to further disciplinary actions.
-You are expected to respect the instructor, the TA, and your fellow classmates, and to maintain a professional and courteous behavior in class and online. Any form of harassment, discrimination, or disruption will not be tolerated.
-You are encouraged to seek help from me if you have any questions or difficulties with the course material, assignments, or quizzes. 
-You are responsible for checking your email, and eLearning regularly for any course-related announcements or updates.
-Grading Policy
-The grade will be based on a weighted score calculated by using the following table:
-
-Grades will be assigned according to the following table:
-		
-
-
-
-
-
-Exams: There will be three exams during the course: two midterms and a final exam. Up to 4 pages (not sheets) of handwritten cheat sheets can be used during an exam, but no books or slides are allowed. The midterm exams will be limited to material covered during the immediate unit, but the final exam is comprehensive. Test material will be taken mainly from classroom lectures.
-The exams will be hosted either in test centers or in class rooms via lockdown browsers. 
-https://ets.utdallas.edu/elearning-services/instructors/remote-teaching-resources/lockdown-browser/
-
-Programming assignments grading:
-Code Development 30% (compile w/o error)
-Program Execution 20% (run successfully)
-Program Design 25% (conform to spec)
-Documentation 15% (program, comments)
-Coding Style 10% (clear, efficient)
-
-
-
+Texas Comptroller of Public Accounts
+Form 
+50-126
+The Property Tax Assistance Division at the Texas Comptroller of Public Accounts provides property tax 
+information and resources for taxpayers, local taxing entities, appraisal districts and appraisal review boards.
+For more information, visit our website: 
+comptroller.texas.gov/taxes/property-tax
+50-126 • 11-17/9
+Tax Deferral Affidavit
+Age 65 or Older or Disabled Homeowner
+____________________________________________________________________ 
+ ____________________________
+Appraisal District Name 
+Phone (area code and number)
+____________________________________________________________________ 
+ ____________________________
+Appraisal District Address 
+Appraisal District Website Address
+ 
+GENERAL INSTRUCTIONS: This affidavit is used to obtain a tax deferral on the collection of residence homestead taxes pursuant to Tax Code Section 
+33.06. Homeowners seeking a deferral or surviving spouses seeking to continue a deferral should complete the appropriate affidavit below. 
+FILING INSTRUCTIONS: This affidavit must be filed with the appraisal district office in the county in which the property is located. Do not file this 
+document with the Texas Comptroller of Public Accounts. A directory with contact information for appraisal district offices may be found on the Comptroller’s 
+website.
+PENALTIES AND INTEREST: A tax lien remains on the property and continues to accrue at an annual 5 percent interest rate during the deferral period. 
+Penalties and interest for delinquent taxes incurred before the date the deferral affidavit is filed are preserved. 
+NOTICE: Your property may still be subject to collection or foreclosure actions arising from other debts or liens including, but not limited to, mortgages or 
+home loans. The services of a competent professional should be sought to obtain assurance or guidance regarding your individual situation.
+SECTION 1: Affidavit by Homeowner
+State of Texas
+County of ______________________________________
+Before me, the undersigned authority, personally appeared _________________________________________ , who, being by me duly sworn,  
+deposed as follows:
+1. My name is ___________________________________ . I am of sound mind, capable of making this affidavit and personally acquainted with  
+ 
+the facts stated in this affidavit. 	
+2. I am (check one): 
+  Age 65 or older
+  Disabled (as defined by Tax Code Section 11.13(m))
+  Disabled veteran (as qualified under Tax Code Section 11.22)
+  Unmarried surviving spouse (as qualified under Tax Code Section 11.22)
+  Surviving child (as qualified under Tax Code Section 11.22) younger than 18 years of age and unmarried
+ 
+(If the surviving child is a minor, the guardian of the minor shall execute the affidavit on the minor’s behalf.)
+3. I own and occupy as my residence homestead, the following property:
+ _________________________________________________________________________________________________
+Street Address or Legal Description of Residence Homestead Property
+4. The facts contained in this affidavit are true and correct.
+Name of Affiant
+Name of Affiant
+Texas Comptroller of Public Accounts
+Form 
+50-126
+The Property Tax Assistance Division at the Texas Comptroller of Public Accounts provides property tax 
+information and resources for taxpayers, local taxing entities, appraisal districts and appraisal review boards.
+For more information, visit our website: 
+comptroller.texas.gov/taxes/property-tax
+50-126 • 11-17/9
+SECTION 1: Affidavit by Homeowner (continued)
+5. I hereby exercise my right under Tax Code Section 33.06 to defer collection of a tax on the residence homestead property described above until such 
+time as this property ceases to be my residence homestead. I understand a tax lien remains on the property and interest continues to accrue during the 
+period collection of taxes is deferred under Tax Code Section 33.06
+Signed on this ______ day of ________________________ , ________
+___________________________________________________ 	 __________________	
+Signature of Affiant	
+Date of Birth
+	
+SUBSCRIBED AND SWORN TO before me this the 
+	
+______ day of ________________________ , ________
+	
+____________________________________________
+	
+Notary Public, State of Texas
+	
+____________________________________________
+	
+My Commission Expires
+	
+____________________________________________
+	
+Notary’s Printed Name
+If you make a false statement on this affidavit, you could be found guilty of a Class A misdemeanor or a state jail felony under Penal Code Section 37.10.
+SECTION 2: Affidavit by Surviving Spouse Continuing Tax Deferral
+State of Texas
+County of_ ______________________________________
+Before me, the undersigned authority, personally appeared__________________________________________ , who, being by me duly sworn,  
+deposed as follows:
+1.	 My name is ____________________________________. I am of sound mind, capable of making this affidavit, and personally acquainted  
+	
+with the facts stated in this affidavit. 
+2.	 I am the surviving spouse of _________________________________________ who died on ____________________________.  
+	
+I was 55 years of age or older at the time of my spouse’s death.
+3.	 The following property was my residence homestead and the residence homestead of my deceased spouse at the time of my spouse’s death:
+	 _________________________________________________________________________________________________ . 
+	
+4.	 The facts contained in this affidavit are true and correct.
+Name of Affiant
+Name of Affiant
+Name of Deceased Spouse
+Date of Death
+Street Address or Legal Description of Residence Homestead Property
+SIGN
+SIGN
+Texas Comptroller of Public Accounts
+Form 
+50-126
+The Property Tax Assistance Division at the Texas Comptroller of Public Accounts provides property tax 
+information and resources for taxpayers, local taxing entities, appraisal districts and appraisal review boards.
+For more information, visit our website: 
+comptroller.texas.gov/taxes/property-tax
+50-126 • 11-17/9
+SECTION 2: Affidavit by Surviving Spouse Continuing Tax Deferral (continued)
+5. I hereby exercise my right under Tax Code Section 33.06 to continue to defer collection of a tax on the residence homestead property described above  
+ 
+until such time as this property ceases to be my residence homestead. I understand a tax lien remains on the property and interest continues to accrue  
+ 
+during the period collection of taxes is deferred under Tax Code Section 33.06.
+Signed on this ______ day of ________________________ , ________
+___________________________________________________ 	 __________________	
+Signature of Affiant	
+Date of Birth
+	
+SUBSCRIBED AND SWORN TO before me this the 
+	
+______ day of ________________________ , ________
+	
+____________________________________________
+	
+Notary Public, State of Texas
+	
+____________________________________________
+	
+My Commission Expires
+	
+____________________________________________
+	
+Notary’s Printed Name
+If you make a false statement on this affidavit, you could be found guilty of a Class A misdemeanor or a state jail felony under Penal Code Section 37.10.
+SIGN

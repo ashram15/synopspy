@@ -1,7 +1,9 @@
 import json
+import time
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import HTTPBearer
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi import FastAPI, UploadFile, File, APIRouter, Depends, HTTPException
+from typing import Optional
 from db import db  # Import the database connection
 from io import BytesIO
 from datetime import datetime
@@ -72,6 +74,36 @@ def get_current_user(token: str = Depends(auth_scheme)):
         raise HTTPException(status_code=401, detail="Token Validation Failed")
 
 
+def get_current_user_optional(token: Optional[HTTPAuthorizationCredentials] = Depends(HTTPBearer(auto_error=False))):
+    """Get current user if authenticated, return None if not"""
+    if token is None:
+        return None
+
+    try:
+        # Get JWKS token from Auth0
+        jwks_url = f"https://{AUTH_0_DOMAIN}/.well-known/jwks.json"
+        jwks = requests.get(jwks_url).json()
+        unverified_header = jwt.get_unverified_header(token.credentials)
+        rsa_key = {}
+        for key in jwks["keys"]:
+            if key["kid"] == unverified_header["kid"]:
+                rsa_key = {
+                    "kty": key["kty"],
+                    "kid": key["kid"],
+                    "use": key["use"],
+                    "n": key["n"],
+                    "e": key["e"]
+                }
+        if not rsa_key:
+            return None
+
+        payload = jwt.decode(token.credentials, rsa_key, algorithms=ALGORITHMS,
+                             audience=API_AUDIENCE, issuer=f"https://{AUTH_0_DOMAIN}/")
+        return payload
+    except Exception:
+        return None
+
+
 def extract_text_from_pdf_bytes(pdf_bytes):
     text = ""
     try:
@@ -101,34 +133,60 @@ def handleFile(filetext):
 
     # The client gets the API key from the environment variable `GEMINI_API_KEY`.
     client = genai.Client(api_key=API_KEY)
-    myfile = client.files.upload(file="file.txt")
 
-    response = client.models.generate_content(
-        model="gemini-2.5-flash", contents=[myfile, "\nTell me the topic of the file.",
-                                            "Summarize the file content in 3 sentences.",
-                                            "If the topic of the file is an important document (like a legal document, contract, or terms and conditions), "
-                                            "rate its security level on a scale of 1 to 5 (1 being safe document, 5 being highly sensitive document). "
-                                            "Advise the user what to do if they encounter this. In addition to the rating, flag any concerning language or phrases that indicate potential security risks. Answer this concerning language in an array of strings. Keep this concise and to the point.",
-                                            "Respond ONLY as JSON.The format should be like {"
-                                            "'topic': 'text', 'summary':'text','security_level':'number on scale with description of level', 'concerning_language':'text', 'questions': 'questions the user should ask regarding the document. Answer this in a array of strings. Keep these questions concise.'Do not include any other text.",
-                                            "Also keep the response short and concise."
-                                            ],
-    )
+    # Retry logic for API calls
+    max_retries = 3
+    retry_delay = 2  # seconds
 
-    try:
-        cleaned = response.text.strip("```json").strip("```").strip()
-        parsed = json.loads(cleaned)
-        return parsed
+    for attempt in range(max_retries):
+        try:
+            myfile = client.files.upload(file="file.txt")
 
-    except json.JSONDecodeError as e:
-        print("JSON Decode Error:", e)
-        print("Raw response:", response.text)
-        return {"error": str(e), "raw": response.text}
+            response = client.models.generate_content(
+                model="gemini-2.5-flash", contents=[myfile, "\nTell me the topic of the file.",
+                                                    "Summarize the file content in 3 sentences.",
+                                                    "If the topic of the file is an important document (like a legal document, contract, or terms and conditions), "
+                                                    "rate its security level on a scale of 1 to 5 (1 being safe document, 5 being highly sensitive document). "
+                                                    "Advise the user what to do if they encounter this. In addition to the rating, flag any concerning language or phrases that indicate potential security risks. Answer this concerning language in an array of strings. Keep this concise and to the point.",
+                                                    "Respond ONLY as JSON.The format should be like {"
+                                                    "'topic': 'text', 'summary':'text','security_level':'number on scale with description of level', 'concerning_language':'text', 'questions': 'questions the user should ask regarding the document. Answer this in a array of strings. Keep these questions concise.'Do not include any other text.",
+                                                    "Also keep the response short and concise."
+                                                    ],
+            )
+
+            try:
+                cleaned = response.text.strip("```json").strip("```").strip()
+                parsed = json.loads(cleaned)
+                return parsed
+
+            except json.JSONDecodeError as e:
+                print("JSON Decode Error:", e)
+                print("Raw response:", response.text)
+                return {"error": f"JSON parsing failed: {str(e)}", "raw": response.text}
+
+        except Exception as e:
+            print(f"API call attempt {attempt + 1} failed: {str(e)}")
+            if "503" in str(e) or "overloaded" in str(e).lower():
+                if attempt < max_retries - 1:
+                    print(f"Retrying in {retry_delay} seconds...")
+                    time.sleep(retry_delay)
+                    retry_delay *= 2  # Exponential backoff
+                    continue
+                else:
+                    return {"error": "503 UNAVAILABLE. The AI service is currently overloaded. Please try again later."}
+            else:
+                return {"error": f"API call failed: {str(e)}"}
+
+    return {"error": "Maximum retries exceeded"}
 
 
 @app.post("/upload")
-async def upload_file(file: UploadFile = File(...), user: dict = Depends(get_current_user)):
-    print("User payload:", user)
+async def upload_file(file: UploadFile = File(...), user: Optional[dict] = Depends(get_current_user_optional)):
+    if user:
+        print("User payload:", user)
+    else:
+        print("Anonymous upload")
+
     try:
         contents = await file.read()
 
@@ -150,14 +208,16 @@ async def upload_file(file: UploadFile = File(...), user: dict = Depends(get_cur
 
         analysis_result = handleFile(text)
 
-        # Save analysis + metadata to MongoDB
-        await db.uploads.insert_one({
-            "filename": file.filename,
-            "content_type": file.content_type,
-            "user_id": user["sub"],  # Replace with actual user ID if available
-            "analysis": analysis_result,
-            "timestamp": datetime.utcnow()
-        })
+        # Save analysis + metadata to MongoDB only if user is authenticated
+        if user:
+            await db.uploads.insert_one({
+                "filename": file.filename,
+                "content_type": file.content_type,
+                # Replace with actual user ID if available
+                "user_id": user["sub"],
+                "analysis": analysis_result,
+                "timestamp": datetime.utcnow()
+            })
 
         # Return the analysis
         # return {
