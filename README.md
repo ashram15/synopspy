@@ -4,7 +4,7 @@ documents. Some examples of documents SynopSpy helps analyze are legal fine prin
 
 📝<strong>Note:</strong> Synopspy is hosted on Render's free-tier. Render's server may go to sleep after a period of inactivity. Thus, <strong>the first request on Synopspy might take 1-2 minutes to load</strong> as Render's server wakes up. <strong>The subsequent requests will be much faster!</strong>
 
-## Live Application: https://synopspy.onrender.com
+### LIVE APPLICATION: https://synopspy.onrender.com
 ![synopspy_demo.gif](frontend/src/assets/synopspy2.0.gif)
 
 ## Key Features
