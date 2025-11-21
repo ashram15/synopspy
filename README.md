@@ -1,11 +1,19 @@
-# SynopSpy: Free Document Summarizer with Legal Risk Analysis 
+# SynopSpy 
+### AI-Powered Document Analyzer & Risk Assessor
+
+![Python](https://img.shields.io/badge/Python-3.10+-blue?style=for-the-badge&logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Render](https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)
+
+### [Click Here to Launch Live App]: https://synopspy.onrender.com
+*(Note: App is deployed on Render Free Tier. Please allow ~60-120 seconds for the server to spin up on first load.)*
+
+![synopspy_demo.gif](frontend/src/assets/synopspy2.0.gif)
+
 SynopSpy is a full stack web application that help users understand and assess complex
 documents. Some examples of documents SynopSpy helps analyze are legal fine print, court documents, or terms and conditions. SynopSpy uses NLP(Natural Language Processing) to summarize and analyze these documents, flag risky language, and assign a document safety rating.
 
-📝<strong>Note:</strong> Synopspy is hosted on Render's free-tier. Render's server may go to sleep after a period of inactivity. Thus, <strong>the first request on Synopspy might take 1-2 minutes to load</strong> as Render's server wakes up. <strong>The subsequent requests will be much faster!</strong>
-
-### LIVE APPLICATION: https://synopspy.onrender.com
-![synopspy_demo.gif](frontend/src/assets/synopspy2.0.gif)
 
 ## Key Features
 - <strong>AI-Powered Summarization and Risk Analysis:</strong> Leverages <strong>Google's Gemini API </strong> to perform complex NLP tasks, including large document summarization and content risk analysis. Detects complex legal language and highlights sections in the document that require increased oversight. 
@@ -20,23 +28,26 @@ documents. Some examples of documents SynopSpy helps analyze are legal fine prin
 - MongoDB stores user-specific upload history
 
 ## Technologies 
-- <strong>Frontend:</strong> React, Javascript 
-- <strong>Backend:</strong> FastAPI, Python
-- <strong>Authentication:</strong> Auth0
-- <strong>Database:</strong> MongoDB
-- <strong>API-Communication: </strong>Custom built RESTful API handles all data exchanges between frontend and backend. CORS is used to allow cross-origin requests. 
-- <strong>File Processing:</strong> PyMuPDF, python-docx Libraries
-- <strong>AI-Model:</strong> Google Gemini 
+* <strong>Backend:</strong> FastAPI, Python
+* <strong>Frontend:</strong> React, Javascript 
+* <strong>Database:</strong> MongoDB | NoSQL storage for user upload history and analysis
+* <strong>Security:</strong> Auth0 | Secure user session management
+* <strong>Deployment:</strong> Render (PaaS) | Automated build and deployment pipeline 
+* <strong>API-Communication: </strong>Custom built RESTful API handles all data exchanges between frontend and backend. CORS is used to allow cross-origin requests. 
+* <strong>File Processing:</strong> PyMuPDF, python-docx Libraries
+* <strong>AI-Model:</strong> Google Gemini 
 
-<!-- ## How to Run Locally:   
+## How to Run Locally:   
 - To run the program, run both the <strong>React</strong> frontend and the <strong>FastAPI</strong> backend code simultaneously.   
-1. First navigate to the project root    
+1. Clone the Repo
+    ```git clone [https://github.com/ashram15/synopspy.git](https://github.com/ashram15/synopspy.git)```
+2. First navigate to the project root    
     ```cd synopspy-project```  
-2. Start the frontend    
+3. Start the frontend    
     ```cd frontend ```  
     ```npm install ```  
     ```npm run dev```  
-3. Start the backend on localhost:8000:  
+4. Start the backend on localhost:8000:  
     ```cd backend</code>```  
     - Create and activate venv  
         ```python -m venv .venv```  
@@ -45,9 +56,10 @@ documents. Some examples of documents SynopSpy helps analyze are legal fine prin
         ```pip install -r requirements.txt```
     - Run Backend:  
         ```uvicorn app:app --reload</code>```  
-<strong>The Frontend should now be running on <code>localhost:5173</code> and the backend on <code>localhost:8000</code></strong> -->
-<!-- 4. Access the App
-    - Go to browser and access frontend through <code>localhost:5173</code> -->
+5. Access the App
+    - Go to browser and access frontend through <code>localhost:5173</code>
+<strong>The Frontend should now be running on <code>localhost:5173</code> and the backend on <code>localhost:8000</code></strong> 
+
 
 
 
