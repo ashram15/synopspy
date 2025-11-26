@@ -53,7 +53,7 @@ graph TD
 ## Process 
 - Developed a RESTful API with FastAPI, connected to a React frontend via JavaScript. 
 - User authentication handled via Auth0
-- Uploaded documents are processed using PyMuPDF and python-docx, analyzed with Google Gemeni API. 
+- Uploaded documents are processed using PyMuPDF and python-docx, analyzed with Google Gemini API. 
 - MongoDB stores user-specific upload history
 
 ## Technologies 
