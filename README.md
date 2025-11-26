@@ -19,6 +19,7 @@ SynopSpy is a full stack web application that help users understand and assess c
 documents. Some examples of documents SynopSpy helps analyze are legal fine print, court documents, or terms and conditions. SynopSpy uses NLP(Natural Language Processing) to summarize and analyze these documents, flag risky language, and assign a document safety rating.
 
 ## System Architecture  
+```mermaid
 graph TD
     subgraph Client ["Frontend (Client Side)"]
         User[User] -->|Uploads Document| UI[React + Vite App]
@@ -41,7 +42,7 @@ graph TD
         
         Router -->|Save Metadata| DB[(MongoDB)]
     end
-
+```
 ## Key Features
 - <strong>AI-Powered Summarization and Risk Analysis:</strong> Leverages <strong>Google's Gemini API </strong> to perform complex NLP tasks, including large document summarization and content risk analysis. Detects complex legal language and highlights sections in the document that require increased oversight. 
 - <strong>Dynamic Safety Rating:</strong> processes AI output and generates a 1-5 safety score, providing users with a quick understanding of document risk.
