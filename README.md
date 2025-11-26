@@ -20,7 +20,7 @@ documents. Some examples of documents SynopSpy helps analyze are legal fine prin
 
 ## System Architecture  
 ```mermaid
-graph TD
+graph LR
     subgraph Client ["Frontend (Client Side)"]
         User[User] -->|Uploads Document| UI[React + Vite App]
         UI -->|JWT Auth Token| Auth0[Auth0 Service]
