@@ -50,50 +50,59 @@ const Upload = () => {
 
     function handleFileSelect(event) {
         const file = event.target.files[0];
-        setSelectedFile(file);
+        if (file) {
+            setSelectedFile(file);
+        }
+        event.target.value = null;
     }
 
-    async function handleFileUpload(event) {
-        const file = selectedFile || document.querySelector('.file-input').files[0];
+    const handleReset = () => {
+        setSelectedFile(null);
+        setUploadResult(null);
+        setUploadedFile(null);
+        setFilePreviewUrl(null);
+        setDocxPreviewHtml(null);
+        setLoading(false);
+    };
 
-        if (!file) {
+    async function handleFileUpload(event) {
+        // Use the state variable strictly
+        if (!selectedFile) {
             alert("Please select a file to upload.");
             return;
         }
 
-        // Store uploaded file info
-        setUploadedFile(file);
+        const file = selectedFile; // Use the state!
+        setUploadedFile(file);     // Save it for the preview section
 
-        // Create preview based on file type
+        // --- Preview Logic (Moved here to be safe) ---
         if (file.type === 'application/pdf') {
             const url = URL.createObjectURL(file);
             setFilePreviewUrl(url);
-            setDocxPreviewHtml(null); // Clear any previous DOCX preview
+            setDocxPreviewHtml(null);
         } else if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || file.name.toLowerCase().endsWith('.docx')) {
-            // Convert DOCX to HTML for preview
             try {
                 const arrayBuffer = await file.arrayBuffer();
                 const result = await mammoth.convertToHtml({ arrayBuffer });
                 setDocxPreviewHtml(result.value);
-                setFilePreviewUrl(null); // Clear any previous PDF preview
+                setFilePreviewUrl(null);
             } catch (error) {
                 console.error('Error converting DOCX:', error);
                 setDocxPreviewHtml('<p>Error loading DOCX preview</p>');
             }
         } else {
-            // For other file types, clear previews
             setFilePreviewUrl(null);
             setDocxPreviewHtml(null);
         }
+        // ---------------------------------------------
 
+        setLoading(true);
         const formData = new FormData();
         formData.append('file', file);
-        setLoading(true);
 
         const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
         try {
-            // Prepare headers - only add Authorization if user is authenticated
             const headers = {};
             if (isAuthenticated) {
                 const token = await getAccessTokenSilently({ audience: "https://synopspy-backend.com/api" });
@@ -108,9 +117,7 @@ const Upload = () => {
 
             if (response.ok) {
                 const result = await response.json();
-                console.log("Upload result:", result);
 
-                // Check if there's an error in the response
                 if (result.error) {
                     if (result.error.includes('503') || result.error.includes('overloaded')) {
                         alert("The AI service is currently overloaded. Please try again in a few moments.");
@@ -122,17 +129,19 @@ const Upload = () => {
                 }
 
                 setUploadResult(result);
-                // Only fetch past uploads if authenticated
-                if (isAuthenticated) {
-                    fetchPastUploads();
-                }
+                if (isAuthenticated) fetchPastUploads();
             } else {
-                console.error("File upload failed:", response.statusText);
-                alert("File Upload Failed. Please try again.");
+                let errorMessage = "File upload failed";
+                try {
+                    const errorData = await response.json();
+                    if (errorData.detail) errorMessage = errorData.detail;
+                } catch (e) {
+                    console.error("Could not parse error JSON", e);
+                }
+                throw new Error(errorMessage);
             }
         } catch (error) {
-            console.error("Error uploading file:", error);
-            alert("An error occurred while uploading the file. Please try again.");
+            alert(error.message);
         } finally {
             setLoading(false);
         }
@@ -147,7 +156,7 @@ const Upload = () => {
                         <p>Drop your file here or click to browse</p>
                         <input
                             type="file"
-                            accept=".pdf, .doc, .docx"
+                            accept=".pdf, .docx, application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                             className="file-input"
                             onChange={handleFileSelect}
                         />
@@ -282,11 +291,7 @@ const Upload = () => {
                     )}
 
                     <div className="new-upload-container">
-                        <div className="file-input-container">
-                            <FiUpload className="upload-icon" />
-                            <input type="file" accept=".pdf, .doc, .docx" className="file-input" />
-                        </div>
-                        <button onClick={handleFileUpload} className="uploadButton">
+                        <button onClick={handleReset} className="uploadButton">
                             <FiFileText className="button-icon" />
                             Analyze Another Document
                         </button>
