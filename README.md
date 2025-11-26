@@ -9,6 +9,7 @@
 ![Auth0](https://img.shields.io/badge/Auth0-EB5424?style=for-the-badge&logo=auth0&logoColor=white)
 ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
 ![Render](https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)
+![Tests](https://img.shields.io/badge/tests-passing-brightgreen?style=for-the-badge&logo=pytest&logoColor=white)
 
 ### [Click Here to Launch Live App]: https://synopspy.onrender.com
 *(Note: App is deployed on Render Free Tier. Please allow ~60-120 seconds for the server to spin up on first load.)*
@@ -88,8 +89,27 @@ graph TD
     - Go to browser and access frontend through <code>localhost:5173</code>
 <strong>The Frontend should now be running on <code>localhost:5173</code> and the backend on <code>localhost:8000</code></strong> 
 
+## Testing & Quality Assurance
 
+To ensure system reliability, the backend includes a unit testing suite built with **Pytest** and **FastAPI TestClient**.
 
+**Current Test Coverage:**
+* API Health Checks
+* Environment Configuration
+* Route Availability
+
+**How to run tests:**
+```bash
+# 1. Navigate to backend
+cd backend
+
+# 2. Run the test suite
+pytest
+
+# Expected Output:
+# tests/test_app.py . [100%]
+# 1 passed in 0.xx seconds
+```
 
 
 
