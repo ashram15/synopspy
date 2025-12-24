@@ -1,11 +1,13 @@
-import React, { use, useEffect, useState } from 'react';
-import './App.css'
-import './styles/modern.css'
-import pdfIcon from './assets/pdf.png'
+
+import React, { useEffect, useState } from 'react';
+import './App.css';
+import './styles/modern.css';
+import pdfIcon from './assets/pdf.png';
+import docxIcon from './assets/docx.png';
+import loadImg from './assets/animation.gif';
 import { useAuth0 } from "@auth0/auth0-react";
-import docxIcon from './assets/docx.png'
-import loadImg from './assets/animation.gif'
 import { FiUpload, FiFileText, FiAward, FiShield, FiAlertCircle, FiHelpCircle } from 'react-icons/fi';
+import { Card, CardContent, Typography, Button, Box, CircularProgress, TextField, List, ListItem, ListItemIcon, ListItemText, Divider, Paper, Avatar, Stack } from '@mui/material';
 
 const Upload = () => {
     const [uploadResult, setUploadResult] = useState(null); //uploadResult = null initially 
@@ -97,109 +99,239 @@ const Upload = () => {
     return (
         <section id="upload">
             {!uploadResult && !loading ? (
-                <div className="upload-container">
-                    <div className="file-input-container">
-                        <FiUpload className="upload-icon pulse" />
-                        <p>Drop your file here or click to browse</p>
-                        <input type="file" accept=".pdf, .doc, .docx" className="file-input" />
-                    </div>
-                    <button onClick={handleFileUpload} className="uploadButton">
-                        <FiFileText className="button-icon" />
-                        Synopsize Document
-                    </button>
-                </div>
+                <Box sx={{ 
+                    maxWidth: 800, 
+                    mx: 'auto', 
+                    px: { xs: 2, md: 4 },
+                    py: { xs: 8, md: 12 },
+                    textAlign: 'center'
+                }}>
+                    <Typography variant="h2" sx={{ 
+                        fontSize: { xs: '2rem', md: '3rem' },
+                        fontWeight: 600,
+                        color: '#1d1d1f',
+                        mb: 2
+                    }}>
+                        Upload your document
+                    </Typography>
+                    <Typography variant="body1" sx={{ 
+                        fontSize: '1.25rem',
+                        color: '#6e6e73',
+                        mb: 5
+                    }}>
+                        Get instant AI-powered analysis
+                    </Typography>
+                    <Box sx={{ 
+                        border: '2px dashed #d2d2d7',
+                        borderRadius: 3,
+                        p: 6,
+                        mb: 4,
+                        bgcolor: '#fbfbfd',
+                        transition: 'all 0.3s',
+                        '&:hover': { borderColor: '#0071e3', bgcolor: '#f5f5f7' }
+                    }}>
+                        <FiUpload size={48} color="#6e6e73" style={{ marginBottom: 16 }} />
+                        <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+                            Drag and drop your file here
+                        </Typography>
+                        <input 
+                            type="file" 
+                            accept=".pdf, .doc, .docx" 
+                            className="file-input" 
+                            style={{ 
+                                display: 'block',
+                                margin: '0 auto',
+                                padding: '12px',
+                                fontSize: '1rem',
+                                maxWidth: 400
+                            }} 
+                        />
+                    </Box>
+                    <Button 
+                        onClick={handleFileUpload} 
+                        variant="contained" 
+                        sx={{ 
+                            bgcolor: '#0071e3',
+                            color: '#fff',
+                            px: 4,
+                            py: 1.5,
+                            fontSize: '1.0625rem',
+                            fontWeight: 400,
+                            borderRadius: 980,
+                            '&:hover': { bgcolor: '#0077ed' }
+                        }}
+                    >
+                        Analyze Document
+                    </Button>
+                </Box>
             ) : loading ? (
-                <div className="loading fade-in">
-                    <img src={loadImg} alt="Loading..." />
-                    <p className="loading-text">Analyzing your document...</p>
-                </div>
+                <Box sx={{ 
+                    maxWidth: 800, 
+                    mx: 'auto', 
+                    px: { xs: 2, md: 4 },
+                    py: { xs: 12, md: 16 },
+                    textAlign: 'center',
+                    minHeight: '60vh',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    <img src={loadImg} alt="Loading..." style={{ width: 140, marginBottom: 32 }} />
+                    <Typography variant="h3" sx={{ color: '#1d1d1f', fontWeight: 600, mb: 2 }}>Analyzing...</Typography>
+                    <CircularProgress size={32} sx={{ color: '#0071e3' }} />
+                </Box>
             ) : (
-                <div className="analysis-container fade-in">
-                    <div className="upload-result">
-                        <h2 className="result-title">Document Analysis Results</h2>
-
-                        <div className="result-section topic-section">
-                            <h3><FiAward className="section-icon" /> Topic</h3>
-                            <p className="topic-text">{uploadResult["topic"]}</p>
-                        </div>
-
-                        <div className="result-section summary-section">
-                            <h3><FiFileText className="section-icon" /> Summary</h3>
-                            <p className="summary-text">{uploadResult["summary"]}</p>
-                        </div>
-
-                        <div className="result-section security-section">
-                            <h3><FiShield className="section-icon" /> Security Analysis</h3>
-                            <p className="security-level">{uploadResult["security_level"]}</p>
-                        </div>
-
-                        <div className="result-section concerns-section">
-                            <h3><FiAlertCircle className="section-icon" /> Concerning Language</h3>
-                            <ul className="concerns-list">
-                                {uploadResult["concerning_language"].length > 0 ? (
-                                    uploadResult["concerning_language"].map((phrase, index) => (
-                                        <li key={index} className="concern-item">{phrase}</li>
-                                    ))
-                                ) : (
-                                    <li className="no-concerns">No concerning language found.</li>
-                                )}
-                            </ul>
-                        </div>
-
-                        <div className="result-section questions-section">
-                            <h3><FiHelpCircle className="section-icon" /> Questions to Consider</h3>
-                            <ul className="questions-list">
-                                {uploadResult["questions"].length > 0 ? (
-                                    uploadResult["questions"].map((question, index) => (
-                                        <li key={index} className="question-item">{question}</li>
-                                    ))
-                                ) : (
-                                    <li className="no-questions">No questions to ask.</li>
-                                )}
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div className="new-upload-container">
-                        <div className="file-input-container">
-                            <FiUpload className="upload-icon" />
-                            <input type="file" accept=".pdf, .doc, .docx" className="file-input" />
-                        </div>
-                        <button onClick={handleFileUpload} className="uploadButton">
-                            <FiFileText className="button-icon" />
-                            Synopsize Another Document
-                        </button>
-                    </div>
-                </div>
+                <Box sx={{ 
+                    maxWidth: 900, 
+                    mx: 'auto', 
+                    px: { xs: 2, md: 4 },
+                    py: { xs: 8, md: 12 }
+                }}>
+                    <Typography variant="h2" sx={{ 
+                        fontSize: { xs: '2rem', md: '3rem' },
+                        fontWeight: 600,
+                        color: '#1d1d1f',
+                        mb: 6,
+                        textAlign: 'center'
+                    }}>
+                        Analysis Results
+                    </Typography>
+                        <Stack spacing={4}>
+                            <Box sx={{ 
+                                p: 4, 
+                                bgcolor: '#f5f5f7', 
+                                borderRadius: 3
+                            }}>
+                                <Typography variant="h5" sx={{ fontWeight: 600, color: '#1d1d1f', mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <FiAward /> Topic
+                                </Typography>
+                                <Typography variant="body1" sx={{ fontSize: '1.0625rem', color: '#6e6e73' }}>{uploadResult["topic"]}</Typography>
+                            </Box>
+                            <Box sx={{ 
+                                p: 4, 
+                                bgcolor: '#f5f5f7', 
+                                borderRadius: 3
+                            }}>
+                                <Typography variant="h5" sx={{ fontWeight: 600, color: '#1d1d1f', mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <FiFileText /> Summary
+                                </Typography>
+                                <Typography variant="body1" sx={{ fontSize: '1.0625rem', color: '#6e6e73', lineHeight: 1.6 }}>{uploadResult["summary"]}</Typography>
+                            </Box>
+                            <Box sx={{ 
+                                p: 4, 
+                                bgcolor: '#f5f5f7', 
+                                borderRadius: 3
+                            }}>
+                                <Typography variant="h5" sx={{ fontWeight: 600, color: '#1d1d1f', mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <FiShield /> Security Analysis
+                                </Typography>
+                                <Typography variant="body1" sx={{ fontSize: '1.0625rem', color: '#6e6e73' }}>{uploadResult["security_level"]}</Typography>
+                            </Box>
+                            <Box sx={{ 
+                                p: 4, 
+                                bgcolor: '#f5f5f7', 
+                                borderRadius: 3
+                            }}>
+                                <Typography variant="h5" sx={{ fontWeight: 600, color: '#1d1d1f', mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <FiAlertCircle /> Concerning Language
+                                </Typography>
+                                <List dense>
+                                    {uploadResult["concerning_language"].length > 0 ? (
+                                        uploadResult["concerning_language"].map((phrase, index) => (
+                                            <ListItem key={index}>
+                                                <ListItemIcon><FiAlertCircle color="#e57373" /></ListItemIcon>
+                                                <ListItemText primary={phrase} />
+                                            </ListItem>
+                                        ))
+                                    ) : (
+                                        <ListItem>
+                                            <ListItemText primary="No concerning language found." />
+                                        </ListItem>
+                                    )}
+                                </List>
+                            </Box>
+                            <Box sx={{ 
+                                p: 4, 
+                                bgcolor: '#f5f5f7', 
+                                borderRadius: 3
+                            }}>
+                                <Typography variant="h5" sx={{ fontWeight: 600, color: '#1d1d1f', mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <FiHelpCircle /> Questions to Consider
+                                </Typography>
+                                <List dense>
+                                    {uploadResult["questions"].length > 0 ? (
+                                        uploadResult["questions"].map((question, index) => (
+                                            <ListItem key={index}>
+                                                <ListItemIcon><FiHelpCircle color="#64b5f6" /></ListItemIcon>
+                                                <ListItemText primary={question} />
+                                            </ListItem>
+                                        ))
+                                    ) : (
+                                        <ListItem>
+                                            <ListItemText primary="No questions to ask." />
+                                        </ListItem>
+                                    )}
+                                </List>
+                            </Box>
+                        </Stack>
+                        <Divider sx={{ my: 3 }} />
+                        <Stack direction="row" spacing={2} justifyContent="center">
+                            <Button onClick={() => setUploadResult(null)} variant="outlined" color="primary" startIcon={<FiUpload />} sx={{ borderRadius: 3 }}>
+                                Synopsize Another Document
+                            </Button>
+                        </Stack>
+                    <Box sx={{ textAlign: 'center', mt: 6 }}>
+                        <Button 
+                            onClick={() => setUploadResult(null)} 
+                            variant="contained" 
+                            sx={{ 
+                                bgcolor: '#0071e3',
+                                color: '#fff',
+                                px: 4,
+                                py: 1.5,
+                                fontSize: '1.0625rem',
+                                fontWeight: 400,
+                                borderRadius: 980,
+                                '&:hover': { bgcolor: '#0077ed' }
+                            }}
+                        >
+                            Analyze Another Document
+                        </Button>
+                    </Box>
+                </Box>
             )}
 
-            <div className="past-uploads">
-                <h3><FiFileText className="section-icon" /> Past Uploads</h3>
-                {pastUploads.length === 0 ? (
-                    <p className="no-uploads">No past uploads</p>
-                ) : (
-                    <ul className="uploads-list">
-                        {pastUploads.map((upload, index) => {
-                            let icon = upload.filename.toLowerCase().endsWith('.pdf') ? pdfIcon : docxIcon;
-                            return (
-                                <li
-                                    key={upload._id || index}
-                                    className="past-upload-item"
-                                    onClick={() => setUploadResult(upload.analysis)}
-                                >
-                                    <img src={icon} alt={`${upload.filename.split('.').pop()} icon`} className="file-icon" />
-                                    <div className="upload-info">
-                                        <span className="filename">{upload.filename}</span>
-                                        <small className="timestamp">
-                                            {new Date(upload.timestamp).toLocaleDateString()}
-                                        </small>
-                                    </div>
-                                </li>
-                            );
-                        })}
-                    </ul>
-                )}
-            </div>
+            {pastUploads.length > 0 && (
+                <Box sx={{ maxWidth: 900, mx: 'auto', px: { xs: 2, md: 4 }, py: 6 }}>
+                    <Typography variant="h4" sx={{ fontWeight: 600, color: '#1d1d1f', mb: 4, textAlign: 'center' }}>
+                        Past Uploads
+                    </Typography>
+                    {pastUploads.length === 0 ? (
+                        <Typography color="text.secondary">No past uploads</Typography>
+                    ) : (
+                        <List>
+                            {pastUploads.map((upload, index) => {
+                                let icon = upload.filename.toLowerCase().endsWith('.pdf') ? pdfIcon : docxIcon;
+                                return (
+                                    <ListItem
+                                        button
+                                        key={upload._id || index}
+                                        onClick={() => setUploadResult(upload.analysis)}
+                                        sx={{ borderRadius: 2, mb: 1 }}
+                                    >
+                                        <Avatar src={icon} alt={upload.filename.split('.').pop()} sx={{ width: 32, height: 32, mr: 2 }} />
+                                        <ListItemText
+                                            primary={upload.filename}
+                                            secondary={new Date(upload.timestamp).toLocaleDateString()}
+                                        />
+                                    </ListItem>
+                                );
+                            })}
+                        </List>
+                    )}
+                </Box>
+            )}
         </section>
     );
 }
