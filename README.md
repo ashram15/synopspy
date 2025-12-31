@@ -113,10 +113,10 @@ pytest
 
 
 ## Key Design Decisions
-- Fast API
+- Why Fast API
     - Chosen for its asynchronous capabilities and high performance when handling multiple file uploads concurrently 
     - Minimal boilerplate code compared to Flask/Django for REST APIs 
-- Mongo DB
+- Why Mongo DB
     * JSON-like format integrates seamlessly with React/JS frontend 
     * Scales well for user-specific document queries 
     * Flexible schema allows for easy iteration on stored document metadata 
