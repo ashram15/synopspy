@@ -114,16 +114,16 @@ pytest
 
 ## Key Design Decisions
 - Fast API
-* Chosen for its asynchronous capabilities and high performance when handling multiple file uploads concurrently 
-* Minimal boilerplate code compared to Flask/Django for REST APIs 
+    - Chosen for its asynchronous capabilities and high performance when handling multiple file uploads concurrently 
+    - Minimal boilerplate code compared to Flask/Django for REST APIs 
 - Mongo DB
-* JSON-like format integrates seamlessly with React/JS frontend 
-* Scales well for user-specific document queries 
-* Flexible schema allows for easy iteration on stored document metadata 
+    * JSON-like format integrates seamlessly with React/JS frontend 
+    * Scales well for user-specific document queries 
+    * Flexible schema allows for easy iteration on stored document metadata 
 - Why Gemini 
-* Free tier with generous quote limits
-* Multi-modal capabilities (Synopspy may extend to analyzing image/pdf analysis in future) 
-* Lower latency 
+    * Free tier with generous quote limits
+    * Multi-modal capabilities (Synopspy may extend to analyzing image/pdf analysis in future) 
+    * Lower latency 
 
 ## Future Improvements 
 * **Email Notifications:** sending alerts when high-risk documents are detected 
