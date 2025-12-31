@@ -28,6 +28,26 @@ documents. Some examples of documents SynopSpy helps analyze are legal fine prin
 - <strong>File Processing:</strong> PyMuPDF, python-docx Libraries
 - <strong>AI-Model:</strong> Google Gemini 
 
+## Key Design Decisions
+- Fast API
+* Chosen for its asynchronous capabilities and high performance when handling multiple file uploads concurrently 
+* Minimal boilerplate code compared to Flask/Django for REST APIs 
+- Mongo DB
+* JSON-like format integrates seamlessly with React/JS frontend 
+* Scales well for user-specific document queries 
+* Flexible schema allows for easy iteration on stored document metadata 
+- Why Gemini 
+* Free tier with generous quote limits
+* Multi-modal capabilities (Synopspy may extend to analyzing image/pdf analysis in future) 
+* Lower latency 
+
+## Future Improvements 
+* **Email Notifications:** sending alerts when high-risk documents are detected 
+* **Collaborative Features:** sharing document analyses with friends, lawyers, or team members 
+* **Export Options:** Enable PDF/CSV export of analysis results 
+* **Custom Risk Categories:** allow users to define custom risk keywords/phrases for Synopspy to flag. 
+* **Mobile Responsiveness:** optimize UI for mobile devices 
+
 <!-- ## How to Run Locally:   
 - To run the program, run both the <strong>React</strong> frontend and the <strong>FastAPI</strong> backend code simultaneously.   
 1. First navigate to the project root    
