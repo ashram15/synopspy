@@ -10,6 +10,7 @@
 ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
 ![Render](https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)
 ![Tests](https://img.shields.io/badge/tests-passing-brightgreen?style=for-the-badge&logo=pytest&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
 ### [Click Here to Launch Live App]: https://synopspy.onrender.com
 *(Note: App is deployed on Render Free Tier. Please allow ~60-120 seconds for the server to spin up on first load.)*
@@ -49,6 +50,7 @@ graph TD
 - <strong>Dynamic Safety Rating:</strong> processes AI output and generates a 1-5 safety score, providing users with a quick understanding of document risk.
 - <strong>User Authentication</strong>: Integrates a secure login using <strong>Auth0</strong> to ensure that document uploads are tied to individual users. 
 - <strong>Upload History:</strong> Stores and retrieves a user's previous document analysis using <strong>MongoDB</strong>, allowing for easy comparison and review. 
+- <strong>Analysis Download Function</strong>Authenticated users can download their document analysis.
 
 ## Process 
 - Developed a RESTful API with FastAPI, connected to a React frontend via JavaScript. 
@@ -65,6 +67,7 @@ graph TD
 * <strong>API-Communication: </strong>Custom built RESTful API handles all data exchanges between frontend and backend. CORS is used to allow cross-origin requests. 
 * <strong>File Processing:</strong> PyMuPDF, python-docx Libraries
 * <strong>AI-Model:</strong> Google Gemini 
+* <strong>Container:</strong> Docker, backend containerized on docker. 
 
 ## How to Run Locally:   
 - To run the program, run both the <strong>React</strong> frontend and the <strong>FastAPI</strong> backend code simultaneously.   
