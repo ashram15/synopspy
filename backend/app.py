@@ -11,6 +11,11 @@ from core.security import get_current_user, get_current_user_optional
 from services.file_service import extract_text_from_pdf_bytes, extract_text_from_doc_bytes
 from services.google_gemini import handleFile
 
+from services.pdf_generator import generate_analysis_pdf
+from fastapi.responses import StreamingResponse
+import io
+
+
 load_dotenv()
 
 app = FastAPI()
@@ -94,3 +99,34 @@ async def get_uploads(user: dict = Depends(get_current_user)):
         upload["_id"] = str(upload["_id"])
 
     return uploads
+
+
+@app.get("/analysis/{upload_id}/pdf")
+async def download_analysis_pdf(
+    upload_id: str,
+    user: dict = Depends(get_current_user)
+):
+    # Fetch the upload from MongoDB
+    upload = await db.uploads.find_one({
+        "_id": db.to_object_id(upload_id),
+        "user_id": user["sub"]
+    })
+
+    if not upload:
+        raise HTTPException(status_code=404, detail="Analysis not found")
+
+    analysis = upload.get("analysis")
+    if not analysis:
+        raise HTTPException(status_code=400, detail="No analysis available")
+
+    pdf_bytes = generate_analysis_pdf(analysis)
+
+    filename = upload.get("filename", "analysis")
+
+    return StreamingResponse(
+        io.BytesIO(pdf_bytes),
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}.pdf"'
+        }
+    )

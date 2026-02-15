@@ -281,6 +281,13 @@ const Upload = () => {
                                         </div>
                                     </div>
                                 </div>
+                                <div>
+                                    <button onClick={() => {
+                                        window.open(`${import.meta.env.VITE_BACKEND_URL}/analysis/${upload._id}/pdf`)
+                                    }}>
+                                        ↓ Download PDF
+                                    </button>
+                                </div>
                             </div>
                         </>
 
@@ -296,6 +303,7 @@ const Upload = () => {
                             Analyze Another Document
                         </button>
                     </div>
+
                 </div>
             )}
 
