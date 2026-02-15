@@ -10,6 +10,7 @@ import mammoth from 'mammoth';
 
 const Upload = () => {
     const [uploadResult, setUploadResult] = useState(null);
+    const [currentUploadId, setCurrentUploadId] = useState(null);
     const [loading, setLoading] = useState(false);
     const [pastUploads, setPastUploads] = useState([]);
     const [uploadedFile, setUploadedFile] = useState(null);
@@ -59,11 +60,47 @@ const Upload = () => {
     const handleReset = () => {
         setSelectedFile(null);
         setUploadResult(null);
+        setCurrentUploadId(null);
         setUploadedFile(null);
         setFilePreviewUrl(null);
         setDocxPreviewHtml(null);
         setLoading(false);
     };
+
+    async function handleDownloadPDF() {
+        if (!currentUploadId || !isAuthenticated) return;
+
+        try {
+            const token = await getAccessTokenSilently({ audience: "https://synopspy-backend.com/api" });
+            const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
+            const response = await fetch(`${BACKEND_URL}/analysis/${currentUploadId}/pdf`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'analysis.pdf';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } else {
+                const errorText = await response.text();
+                console.error("Error response:", errorText);
+                alert(`Failed to download PDF: ${response.status} - ${errorText}`);
+            }
+        } catch (error) {
+            console.error("Error downloading PDF:", error);
+            alert(`Error downloading PDF: ${error.message}`);
+        }
+    }
 
     async function handleFileUpload(event) {
         // Use the state variable strictly
@@ -128,7 +165,10 @@ const Upload = () => {
                     return;
                 }
 
-                setUploadResult(result);
+                // Extract upload_id if present
+                const { upload_id, ...analysisData } = result;
+                setUploadResult(analysisData);
+                setCurrentUploadId(upload_id || null);
                 if (isAuthenticated) fetchPastUploads();
             } else {
                 let errorMessage = "File upload failed";
@@ -281,13 +321,13 @@ const Upload = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div>
-                                    <button onClick={() => {
-                                        window.open(`${import.meta.env.VITE_BACKEND_URL}/analysis/${upload._id}/pdf`)
-                                    }}>
-                                        ↓ Download PDF
-                                    </button>
-                                </div>
+                                {currentUploadId && isAuthenticated && (
+                                    <div>
+                                        <button onClick={handleDownloadPDF}>
+                                            ↓ Download PDF
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </>
 
@@ -320,7 +360,10 @@ const Upload = () => {
                                     <li
                                         key={upload._id || index}
                                         className="past-upload-item"
-                                        onClick={() => setUploadResult(upload.analysis)}
+                                        onClick={() => {
+                                            setUploadResult(upload.analysis);
+                                            setCurrentUploadId(upload._id);
+                                        }}
                                     >
                                         <img src={icon} alt={`${upload.filename.split('.').pop()} icon`} className="file-icon" />
                                         <div className="upload-info">

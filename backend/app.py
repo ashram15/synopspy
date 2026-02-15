@@ -4,7 +4,9 @@ from typing import Optional
 
 from fastapi import FastAPI, UploadFile, File, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
+from bson import ObjectId
 
 from core.database import db
 from core.security import get_current_user, get_current_user_optional
@@ -32,7 +34,37 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
+
+
+# Custom exception handler to ensure CORS headers on errors
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request, exc):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail},
+        headers={
+            "Access-Control-Allow-Origin": request.headers.get("origin", "*"),
+            "Access-Control-Allow-Credentials": "true",
+        }
+    )
+
+
+# General exception handler for all other errors
+@app.exception_handler(Exception)
+async def general_exception_handler(request, exc):
+    print(f"Unhandled exception: {type(exc).__name__}: {str(exc)}")
+    import traceback
+    traceback.print_exc()
+    return JSONResponse(
+        status_code=500,
+        content={"detail": f"Internal server error: {str(exc)}"},
+        headers={
+            "Access-Control-Allow-Origin": request.headers.get("origin", "*"),
+            "Access-Control-Allow-Credentials": "true",
+        }
+    )
 
 
 @app.post("/upload")
@@ -72,16 +104,21 @@ async def upload_file(file: UploadFile = File(...), user: Optional[dict] = Depen
                 status_code=500, detail=analysis_result["error"])
 
         # Save analysis + metadata to MongoDB only if user is authenticated
+        upload_id = None
         if user:
-            await db.uploads.insert_one({
+            result = await db.uploads.insert_one({
                 "filename": file.filename,
                 "content_type": file.content_type,
                 "user_id": user["sub"],
                 "analysis": analysis_result,
                 "timestamp": datetime.now(timezone.utc)
             })
+            upload_id = str(result.inserted_id)
 
-        return analysis_result
+        return {
+            **analysis_result,
+            "upload_id": upload_id
+        }
     except HTTPException as he:
         raise he
     except Exception as e:
@@ -104,29 +141,40 @@ async def get_uploads(user: dict = Depends(get_current_user)):
 @app.get("/analysis/{upload_id}/pdf")
 async def download_analysis_pdf(
     upload_id: str,
+    # only authenticated users can download PDFs
     user: dict = Depends(get_current_user)
 ):
-    # Fetch the upload from MongoDB
-    upload = await db.uploads.find_one({
-        "_id": db.to_object_id(upload_id),
-        "user_id": user["sub"]
-    })
+    try:
+        # Fetch the upload from MongoDB
+        upload = await db.uploads.find_one({
+            "_id": ObjectId(upload_id),
+            "user_id": user["sub"]
+        })
 
-    if not upload:
-        raise HTTPException(status_code=404, detail="Analysis not found")
+        if not upload:
+            raise HTTPException(status_code=404, detail="Analysis not found")
 
-    analysis = upload.get("analysis")
-    if not analysis:
-        raise HTTPException(status_code=400, detail="No analysis available")
+        analysis = upload.get("analysis")
+        if not analysis:
+            raise HTTPException(
+                status_code=400, detail="No analysis available")
 
-    pdf_bytes = generate_analysis_pdf(analysis)
+        pdf_bytes = generate_analysis_pdf(analysis)
 
-    filename = upload.get("filename", "analysis")
+        filename = upload.get("filename", "analysis")
 
-    return StreamingResponse(
-        io.BytesIO(pdf_bytes),
-        media_type="application/pdf",
-        headers={
-            "Content-Disposition": f'attachment; filename="{filename}.pdf"'
-        }
-    )
+        return StreamingResponse(
+            io.BytesIO(pdf_bytes),
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": f'attachment; filename="{filename}.pdf"'
+            }
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error generating PDF: {type(e).__name__}: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=500, detail=f"Error generating PDF: {str(e)}")
