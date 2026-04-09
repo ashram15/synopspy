@@ -1,236 +1,83 @@
-/* Modern UI Enhancement for SynopSpy */
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes slideInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes pulse {
-
-    0%,
-    100% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.05);
-    }
-}
-
-/* Smooth transitions for all interactive elements */
-* {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Modern UI Enhancement for SynopSpy */
-
 :root {
     --primary: #00BF63;
     --secondary: #EBF9D9;
     --text: #545454;
     --accent: #D9EFBD;
     --hover: rgba(0, 191, 99, 0.1);
-}
-
-/* Logo Styles */
-.logo-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    padding: 2rem;
-    animation: fadeIn 1s ease-out;
-}
-
-
-.logo-text {
-    font-size: 8vw;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-    text-transform: uppercase;
-    gap: 0;
-    letter-spacing: -0.1em;
-}
-
-.syn {
-    color: var(--primary);
-    text-shadow: 2px 2px 4px rgba(0, 191, 99, 0.2);
-    margin-right: -0.7em;
-}
-
-.op-image {
-    height: 8vw;
-    margin: 0 -1.1em;
-    object-fit: contain;
-    padding: 0;
-}
-
-.spy {
-    color: var(--text);
-    background: linear-gradient(135deg, var(--primary) 0%, #048748 100%);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: none;
-}
-
-.logo-subtitle {
-    font-size: 1.5rem;
-    color: var(--text);
-    opacity: 0.8;
-    text-align: center;
-    font-weight: 300;
-    letter-spacing: 0.1em;
-    animation: fadeIn 1s ease-out 0.5s both;
+    --surface: #ffffff;
+    --border: #dfe9d4;
 }
 
 * {
     box-sizing: border-box;
-    font-family: 'League Spartan', sans-serif;
-    margin: 0;
-    padding: 0;
-    transition: all 0.3s ease;
 }
 
 body {
-    background-color: var(--secondary);
     margin: 0;
+    background: #ffffff;
+    color: var(--text);
 }
 
-/* Enhanced Header Styles */
-.header {
-    background-color: var(--primary);
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
-
-.navBar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem 2rem;
-    background-color: var(--primary);
-}
-
-.logoImg,
 .profileImg {
-    width: 70px;
-    height: 70px;
-    transition: transform 0.3s ease;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
 }
 
-.logoImg:hover,
-.profileImg:hover {
-    transform: scale(1.1);
-}
-
-.navBar ul {
-    display: flex;
-    gap: 2rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
-.navBar li {
-    position: relative;
-}
-
-.navBar a {
-    text-decoration: none;
-    color: var(--secondary);
-    font-size: 1.2rem;
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-}
-
-.navBar a:hover {
-    background-color: rgba(235, 249, 217, 0.1);
-}
-
-.navBar button {
-    background-color: transparent;
-    border: 2px solid var(--secondary);
-    color: var(--secondary);
-    font-size: 1.2rem;
-    padding: 0.5rem 1.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.navBar button:hover {
-    background-color: var(--secondary);
-    color: var(--primary);
-}
-
-/* Upload Section Styles */
 #upload {
-    min-height: calc(100vh - 140px);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem;
-    gap: 2rem;
+    width: min(1080px, 100%);
+    margin: 0 auto;
+    padding: 2rem 1rem 4rem;
+}
+
+.upload-container,
+.analysis-container,
+.past-uploads {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.06);
 }
 
 .upload-container {
-    width: 100%;
-    max-width: 800px;
-    background-color: white;
-    border-radius: 20px;
     padding: 2rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    animation: slideUp 0.5s ease;
+}
+
+.upload-title {
+    font-size: clamp(1.75rem, 2.6vw, 2.5rem);
+    color: #1d1d1f;
+    margin: 0 0 0.5rem;
+    text-align: center;
+}
+
+.upload-subtitle {
+    text-align: center;
+    color: #6e6e73;
+    margin: 0 0 1.5rem;
 }
 
 .file-input-container {
     position: relative;
-    width: 100%;
-    height: 200px;
+    min-height: 210px;
     border: 2px dashed var(--primary);
-    border-radius: 20px;
+    border-radius: 16px;
+    background: linear-gradient(180deg, #ffffff 0%, #f9fff4 100%);
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-bottom: 2rem;
+    justify-content: center;
+    gap: 0.5rem;
+    text-align: center;
+    padding: 1rem;
 }
 
 .file-input-container:hover {
-    background-color: var(--hover);
+    background: #f6ffef;
 }
 
 .file-input {
     position: absolute;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     opacity: 0;
     cursor: pointer;
 }
@@ -240,137 +87,271 @@ body {
     color: var(--primary);
 }
 
-.uploadButton {
-    background-color: var(--primary);
-    color: white;
+.pulse {
+    animation: pulse 1.8s ease-in-out infinite;
+}
+
+.selected-file-preview {
+    margin-top: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: #f9fff4;
+    padding: 0.9rem;
+}
+
+.selected-file-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.file-type-icon {
+    width: 36px;
+    height: 36px;
+}
+
+.file-details {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.filename {
+    font-weight: 600;
+    color: #1d1d1f;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.filesize,
+.timestamp {
+    color: #6e6e73;
+    font-size: 0.85rem;
+}
+
+.remove-file-btn {
     border: none;
-    padding: 1rem 3rem;
-    font-size: 1.2rem;
-    border-radius: 30px;
+    background: transparent;
+    color: #e74c3c;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0, 191, 99, 0.3);
-    transition: all 0.3s ease;
+    font-size: 1.1rem;
+}
+
+.upload-button-container,
+.new-upload-container {
+    margin-top: 1.25rem;
+    display: flex;
+    justify-content: center;
+}
+
+.uploadButton {
+    border: none;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--primary) 0%, #13a757 100%);
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.8rem 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
 }
 
 .uploadButton:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 191, 99, 0.4);
+    transform: translateY(-1px);
 }
 
-/* Results Section */
-.upload-result {
+.uploadButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.loading {
+    min-height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-animation {
+    width: min(520px, 100%);
+    height: auto;
+}
+
+.analysis-container {
+    margin-top: 1rem;
+    padding: 1.5rem;
+}
+
+.result-title {
+    margin: 0 0 1rem;
+    color: #1d1d1f;
+    text-align: center;
+}
+
+.results-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.document-preview-column,
+.analysis-results-column {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: #fcfffa;
+    padding: 1rem;
+}
+
+.document-viewer {
+    height: 560px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.pdf-preview {
     width: 100%;
-    max-width: 800px;
-    background-color: white;
-    border-radius: 20px;
-    padding: 2rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    animation: slideUp 0.5s ease;
+    height: 100%;
+    border: none;
 }
 
-.upload-result h2 {
+.docx-preview {
+    height: 100%;
+    overflow-y: auto;
+    background: #fff;
+    padding: 1rem;
+    border-radius: 12px;
+}
+
+.preview-placeholder {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.preview-icon {
+    width: 80px;
+    height: 80px;
+    opacity: 0.75;
+}
+
+.preview-text {
+    margin: 0.6rem 0 0.2rem;
+    color: #1d1d1f;
+}
+
+.report-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+.report-section {
+    border: 1px solid var(--border);
+    background: #fff;
+    border-radius: 12px;
+    padding: 0.85rem;
+}
+
+.report-heading {
+    margin: 0 0 0.5rem;
     color: var(--primary);
-    margin-bottom: 1.5rem;
-    font-size: 2rem;
 }
 
-.upload-result h3 {
-    color: var(--primary);
-    margin-top: 1.5rem;
-    font-size: 1.3rem;
-}
-
-.upload-result p,
-.upload-result ul li {
+.report-text {
+    margin: 0;
     color: var(--text);
-    line-height: 1.6;
-    margin: 1rem 0;
 }
 
-.upload-result ul {
-    list-style: none;
-    padding-left: 1rem;
+.report-list {
+    margin: 0;
+    padding-left: 1.2rem;
 }
 
-.upload-result ul li {
-    position: relative;
-    padding-left: 1.5rem;
+.error-message {
+    text-align: center;
+    color: #b00020;
 }
 
-.upload-result ul li:before {
-    content: "•";
-    color: var(--primary);
-    position: absolute;
-    left: 0;
-    font-weight: bold;
-}
-
-/* Past Uploads Section */
 .past-uploads {
-    width: 100%;
-    max-width: 800px;
-    background-color: white;
-    border-radius: 20px;
-    padding: 2rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    margin-top: 1.25rem;
+    padding: 1.25rem;
 }
 
 .past-uploads h3 {
-    color: var(--primary);
+    margin: 0 0 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+}
+
+.no-uploads {
     text-align: center;
-    margin-bottom: 1.5rem;
-    font-size: 1.5rem;
+    color: #6e6e73;
+}
+
+.uploads-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
 .past-upload-item {
     display: flex;
     align-items: center;
-    padding: 1rem;
-    margin: 0.5rem 0;
-    border-radius: 10px;
-    background-color: var(--secondary);
+    gap: 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.7rem;
+    margin-top: 0.55rem;
     cursor: pointer;
-    transition: all 0.3s ease;
+    background: #fff;
 }
 
 .past-upload-item:hover {
-    transform: translateX(10px);
-    background-color: var(--accent);
+    background: #f6ffef;
 }
 
-.past-upload-item img {
-    width: 30px;
-    height: 30px;
-    margin-right: 1rem;
+.file-icon {
+    width: 28px;
+    height: 28px;
 }
 
-.past-upload-item span {
-    flex: 1;
-    color: var(--text);
+.upload-info {
+    min-width: 0;
 }
 
-.past-upload-item small {
-    color: var(--text);
-    opacity: 0.7;
+.fade-in {
+    animation: fadeIn 0.35s ease-out;
 }
 
-/* Loading Animation */
-.loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
+#footer {
+    background-color: #f5f5f7;
 }
 
-.loading img {
-    animation: pulse 2s infinite;
+@keyframes pulse {
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.06);
+    }
 }
 
-/* Animations */
-@keyframes slideUp {
+@keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(8px);
     }
 
     to {
@@ -379,79 +360,12 @@ body {
     }
 }
 
-@keyframes pulse {
-    0% {
-        transform: scale(0.95);
-        opacity: 0.8;
+@media (max-width: 920px) {
+    .results-layout {
+        grid-template-columns: 1fr;
     }
 
-    50% {
-        transform: scale(1.05);
-        opacity: 1;
+    .document-viewer {
+        height: 420px;
     }
-
-    100% {
-        transform: scale(0.95);
-        opacity: 0.8;
-    }
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .navBar {
-        padding: 0.5rem 1rem;
-    }
-
-    .navBar ul {
-        gap: 1rem;
-    }
-
-    .upload-container,
-    .upload-result,
-    .past-uploads {
-        padding: 1.5rem;
-    }
-
-    .uploadButton {
-        padding: 0.8rem 2rem;
-        font-size: 1rem;
-    }
-}
-
-/* Footer Enhancement */
-#footer {
-    background-color: var(--primary);
-    color: var(--secondary);
-    text-align: center;
-    padding: 1.5rem;
-    margin-top: auto;
-    box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.1);
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-    width: 10px;
-}
-
-::-webkit-scrollbar-track {
-    background: var(--secondary);
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--primary);
-    border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--text);
 }

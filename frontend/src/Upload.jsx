@@ -1,24 +1,30 @@
-
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import './styles/modern.css';
 import pdfIcon from './assets/pdf.png';
 import docxIcon from './assets/docx.png';
 import loadImg from './assets/animation.gif';
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth0 } from '@auth0/auth0-react';
 import { FiUpload, FiFileText, FiAward, FiShield, FiAlertCircle, FiHelpCircle } from 'react-icons/fi';
-import { Card, CardContent, Typography, Button, Box, CircularProgress, TextField, List, ListItem, ListItemIcon, ListItemText, Divider, Paper, Avatar, Stack } from '@mui/material';
+import mammoth from 'mammoth';
 
 const Upload = () => {
-    const [uploadResult, setUploadResult] = useState(null); //uploadResult = null initially 
-    const [loading, setLoading] = useState(false); //loading set to false initially 
-    const [pastUploads, setPastUploads] = useState([]); //pastUploads is set to an empty array 
-    const { getAccessTokenSilently } = useAuth0();
+    const [uploadResult, setUploadResult] = useState(null);
+    const [currentUploadId, setCurrentUploadId] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [pastUploads, setPastUploads] = useState([]);
+    const [uploadedFile, setUploadedFile] = useState(null);
+    const [filePreviewUrl, setFilePreviewUrl] = useState(null);
+    const [docxPreviewHtml, setDocxPreviewHtml] = useState(null);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const { getAccessTokenSilently, isAuthenticated } = useAuth0();
 
-    // Fetch past uploads when component mounts
+    // Fetch past uploads when component mounts (only if authenticated)
     useEffect(() => {
-        fetchPastUploads();
-    }, []);
+        if (isAuthenticated) {
+            fetchPastUploads();
+        }
+    }, [isAuthenticated]);
 
     async function fetchPastUploads() {
         try {
@@ -43,294 +49,336 @@ const Upload = () => {
         }
     }
 
-    async function handleFileUpload(event) {
-        const fileInput = document.querySelector('.file-input'); //will store a list of files in fileInput
-        const file = fileInput.files[0]; //so we need the exact file in the list of files
+    function handleFileSelect(event) {
+        const file = event.target.files[0];
+        if (file) {
+            setSelectedFile(file);
+        }
+        event.target.value = null;
+    }
 
-        if (!file) {
+    const handleReset = () => {
+        setSelectedFile(null);
+        setUploadResult(null);
+        setCurrentUploadId(null);
+        setUploadedFile(null);
+        setFilePreviewUrl(null);
+        setDocxPreviewHtml(null);
+        setLoading(false);
+    };
+
+    async function handleDownloadPDF() {
+        if (!currentUploadId || !isAuthenticated) return;
+
+        try {
+            const token = await getAccessTokenSilently({ audience: "https://synopspy-backend.com/api" });
+            const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
+            const response = await fetch(`${BACKEND_URL}/analysis/${currentUploadId}/pdf`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'analysis.pdf';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } else {
+                const errorText = await response.text();
+                console.error("Error response:", errorText);
+                alert(`Failed to download PDF: ${response.status} - ${errorText}`);
+            }
+        } catch (error) {
+            console.error("Error downloading PDF:", error);
+            alert(`Error downloading PDF: ${error.message}`);
+        }
+    }
+
+    async function handleFileUpload(event) {
+        // Use the state variable strictly
+        if (!selectedFile) {
             alert("Please select a file to upload.");
             return;
         }
 
-        const extension = file.name.split('.').pop().toLowerCase(); // Get the file extension
+        const file = selectedFile; // Use the state!
+        setUploadedFile(file);     // Save it for the preview section
 
-        const formData = new FormData();
-        formData.append('file', file); //"file" is the key expected by the backend
+        // --- Preview Logic (Moved here to be safe) ---
+        if (file.type === 'application/pdf') {
+            const url = URL.createObjectURL(file);
+            setFilePreviewUrl(url);
+            setDocxPreviewHtml(null);
+        } else if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || file.name.toLowerCase().endsWith('.docx')) {
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const result = await mammoth.convertToHtml({ arrayBuffer });
+                setDocxPreviewHtml(result.value);
+                setFilePreviewUrl(null);
+            } catch (error) {
+                console.error('Error converting DOCX:', error);
+                setDocxPreviewHtml('<p>Error loading DOCX preview</p>');
+            }
+        } else {
+            setFilePreviewUrl(null);
+            setDocxPreviewHtml(null);
+        }
+        // ---------------------------------------------
 
         setLoading(true);
+        const formData = new FormData();
+        formData.append('file', file);
 
         const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-        const token = await getAccessTokenSilently({ audience: "https://synopspy-backend.com/api" }); // Auth0 React hook
 
         try {
+            const headers = {};
+            if (isAuthenticated) {
+                const token = await getAccessTokenSilently({ audience: "https://synopspy-backend.com/api" });
+                headers.Authorization = `Bearer ${token}`;
+            }
+
             const response = await fetch(`${BACKEND_URL}/upload`, {
                 method: "POST",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+                headers: headers,
                 body: formData,
             });
 
             if (response.ok) {
                 const result = await response.json();
-                console.log(result)
-                // alert("File Uploaded Successfully!");
-                //Update UI
-                setUploadResult(result);
-                // Refresh past uploads to include the new upload
-                fetchPastUploads();
 
+                if (result.error) {
+                    if (result.error.includes('503') || result.error.includes('overloaded')) {
+                        alert("The AI service is currently overloaded. Please try again in a few moments.");
+                    } else {
+                        alert("Analysis failed: " + result.error);
+                    }
+                    setLoading(false);
+                    return;
+                }
+
+                // Extract upload_id if present
+                const { upload_id, ...analysisData } = result;
+                setUploadResult(analysisData);
+                setCurrentUploadId(upload_id || null);
+                if (isAuthenticated) fetchPastUploads();
             } else {
-                console.error("File upload failed:", response.statusText);
-                alert("File Upload Failed. Please try again.");
+                let errorMessage = "File upload failed";
+                try {
+                    const errorData = await response.json();
+                    if (errorData.detail) errorMessage = errorData.detail;
+                } catch (e) {
+                    console.error("Could not parse error JSON", e);
+                }
+                throw new Error(errorMessage);
             }
         } catch (error) {
-
-            console.error("Error uploading file:", error);
-            alert("An error occurred while uploading the file. Please try again.");
+            alert(error.message);
         } finally {
             setLoading(false);
         }
-
-        console.log("TOKEN", token)
-
     }
 
     return (
         <section id="upload">
             {!uploadResult && !loading ? (
-                <Box sx={{ 
-                    maxWidth: 800, 
-                    mx: 'auto', 
-                    px: { xs: 2, md: 4 },
-                    py: { xs: 8, md: 12 },
-                    textAlign: 'center'
-                }}>
-                    <Typography variant="h2" sx={{ 
-                        fontSize: { xs: '2rem', md: '3rem' },
-                        fontWeight: 600,
-                        color: '#1d1d1f',
-                        mb: 2
-                    }}>
-                        Upload your document
-                    </Typography>
-                    <Typography variant="body1" sx={{ 
-                        fontSize: '1.25rem',
-                        color: '#6e6e73',
-                        mb: 5
-                    }}>
-                        Get instant AI-powered analysis
-                    </Typography>
-                    <Box sx={{ 
-                        border: '2px dashed #d2d2d7',
-                        borderRadius: 3,
-                        p: 6,
-                        mb: 4,
-                        bgcolor: '#fbfbfd',
-                        transition: 'all 0.3s',
-                        '&:hover': { borderColor: '#0071e3', bgcolor: '#f5f5f7' }
-                    }}>
-                        <FiUpload size={48} color="#6e6e73" style={{ marginBottom: 16 }} />
-                        <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
-                            Drag and drop your file here
-                        </Typography>
-                        <input 
-                            type="file" 
-                            accept=".pdf, .doc, .docx" 
-                            className="file-input" 
-                            style={{ 
-                                display: 'block',
-                                margin: '0 auto',
-                                padding: '12px',
-                                fontSize: '1rem',
-                                maxWidth: 400
-                            }} 
-                        />
-                    </Box>
-                    <Button 
-                        onClick={handleFileUpload} 
-                        variant="contained" 
-                        sx={{ 
-                            bgcolor: '#0071e3',
-                            color: '#fff',
-                            px: 4,
-                            py: 1.5,
-                            fontSize: '1.0625rem',
-                            fontWeight: 400,
-                            borderRadius: 980,
-                            '&:hover': { bgcolor: '#0077ed' }
-                        }}
-                    >
-                        Analyze Document
-                    </Button>
-                </Box>
-            ) : loading ? (
-                <Box sx={{ 
-                    maxWidth: 800, 
-                    mx: 'auto', 
-                    px: { xs: 2, md: 4 },
-                    py: { xs: 12, md: 16 },
-                    textAlign: 'center',
-                    minHeight: '60vh',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                }}>
-                    <img src={loadImg} alt="Loading..." style={{ width: 140, marginBottom: 32 }} />
-                    <Typography variant="h3" sx={{ color: '#1d1d1f', fontWeight: 600, mb: 2 }}>Analyzing...</Typography>
-                    <CircularProgress size={32} sx={{ color: '#0071e3' }} />
-                </Box>
-            ) : (
-                <Box sx={{ 
-                    maxWidth: 900, 
-                    mx: 'auto', 
-                    px: { xs: 2, md: 4 },
-                    py: { xs: 8, md: 12 }
-                }}>
-                    <Typography variant="h2" sx={{ 
-                        fontSize: { xs: '2rem', md: '3rem' },
-                        fontWeight: 600,
-                        color: '#1d1d1f',
-                        mb: 6,
-                        textAlign: 'center'
-                    }}>
-                        Analysis Results
-                    </Typography>
-                        <Stack spacing={4}>
-                            <Box sx={{ 
-                                p: 4, 
-                                bgcolor: '#f5f5f7', 
-                                borderRadius: 3
-                            }}>
-                                <Typography variant="h5" sx={{ fontWeight: 600, color: '#1d1d1f', mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <FiAward /> Topic
-                                </Typography>
-                                <Typography variant="body1" sx={{ fontSize: '1.0625rem', color: '#6e6e73' }}>{uploadResult["topic"]}</Typography>
-                            </Box>
-                            <Box sx={{ 
-                                p: 4, 
-                                bgcolor: '#f5f5f7', 
-                                borderRadius: 3
-                            }}>
-                                <Typography variant="h5" sx={{ fontWeight: 600, color: '#1d1d1f', mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <FiFileText /> Summary
-                                </Typography>
-                                <Typography variant="body1" sx={{ fontSize: '1.0625rem', color: '#6e6e73', lineHeight: 1.6 }}>{uploadResult["summary"]}</Typography>
-                            </Box>
-                            <Box sx={{ 
-                                p: 4, 
-                                bgcolor: '#f5f5f7', 
-                                borderRadius: 3
-                            }}>
-                                <Typography variant="h5" sx={{ fontWeight: 600, color: '#1d1d1f', mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <FiShield /> Security Analysis
-                                </Typography>
-                                <Typography variant="body1" sx={{ fontSize: '1.0625rem', color: '#6e6e73' }}>{uploadResult["security_level"]}</Typography>
-                            </Box>
-                            <Box sx={{ 
-                                p: 4, 
-                                bgcolor: '#f5f5f7', 
-                                borderRadius: 3
-                            }}>
-                                <Typography variant="h5" sx={{ fontWeight: 600, color: '#1d1d1f', mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <FiAlertCircle /> Concerning Language
-                                </Typography>
-                                <List dense>
-                                    {uploadResult["concerning_language"].length > 0 ? (
-                                        uploadResult["concerning_language"].map((phrase, index) => (
-                                            <ListItem key={index}>
-                                                <ListItemIcon><FiAlertCircle color="#e57373" /></ListItemIcon>
-                                                <ListItemText primary={phrase} />
-                                            </ListItem>
-                                        ))
-                                    ) : (
-                                        <ListItem>
-                                            <ListItemText primary="No concerning language found." />
-                                        </ListItem>
-                                    )}
-                                </List>
-                            </Box>
-                            <Box sx={{ 
-                                p: 4, 
-                                bgcolor: '#f5f5f7', 
-                                borderRadius: 3
-                            }}>
-                                <Typography variant="h5" sx={{ fontWeight: 600, color: '#1d1d1f', mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <FiHelpCircle /> Questions to Consider
-                                </Typography>
-                                <List dense>
-                                    {uploadResult["questions"].length > 0 ? (
-                                        uploadResult["questions"].map((question, index) => (
-                                            <ListItem key={index}>
-                                                <ListItemIcon><FiHelpCircle color="#64b5f6" /></ListItemIcon>
-                                                <ListItemText primary={question} />
-                                            </ListItem>
-                                        ))
-                                    ) : (
-                                        <ListItem>
-                                            <ListItemText primary="No questions to ask." />
-                                        </ListItem>
-                                    )}
-                                </List>
-                            </Box>
-                        </Stack>
-                        <Divider sx={{ my: 3 }} />
-                        <Stack direction="row" spacing={2} justifyContent="center">
-                            <Button onClick={() => setUploadResult(null)} variant="outlined" color="primary" startIcon={<FiUpload />} sx={{ borderRadius: 3 }}>
-                                Synopsize Another Document
-                            </Button>
-                        </Stack>
-                    <Box sx={{ textAlign: 'center', mt: 6 }}>
-                        <Button 
-                            onClick={() => setUploadResult(null)} 
-                            variant="contained" 
-                            sx={{ 
-                                bgcolor: '#0071e3',
-                                color: '#fff',
-                                px: 4,
-                                py: 1.5,
-                                fontSize: '1.0625rem',
-                                fontWeight: 400,
-                                borderRadius: 980,
-                                '&:hover': { bgcolor: '#0077ed' }
-                            }}
-                        >
-                            Analyze Another Document
-                        </Button>
-                    </Box>
-                </Box>
-            )}
+                <div className="upload-container">
+                    <h2 className="upload-title">Upload your document</h2>
+                    <p className="upload-subtitle">AI-powered summaries and risk insights in seconds.</p>
 
-            {pastUploads.length > 0 && (
-                <Box sx={{ maxWidth: 900, mx: 'auto', px: { xs: 2, md: 4 }, py: 6 }}>
-                    <Typography variant="h4" sx={{ fontWeight: 600, color: '#1d1d1f', mb: 4, textAlign: 'center' }}>
-                        Past Uploads
-                    </Typography>
-                    {pastUploads.length === 0 ? (
-                        <Typography color="text.secondary">No past uploads</Typography>
+                    <div className="file-input-container">
+                        <FiUpload className="upload-icon pulse" />
+                        <p>Drop your file here or click to browse</p>
+                        <input
+                            type="file"
+                            accept=".pdf, .docx, application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                            className="file-input"
+                            onChange={handleFileSelect}
+                        />
+                    </div>
+
+                    {selectedFile && (
+                        <div className="selected-file-preview">
+                            <div className="selected-file-info">
+                                <img
+                                    src={selectedFile.name.toLowerCase().endsWith('.pdf') ? pdfIcon : docxIcon}
+                                    alt="File type"
+                                    className="file-type-icon"
+                                />
+                                <div className="file-details">
+                                    <span className="filename">{selectedFile.name}</span>
+                                    <span className="filesize">{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</span>
+                                </div>
+                                <button
+                                    className="remove-file-btn"
+                                    onClick={() => setSelectedFile(null)}
+                                    type="button"
+                                >
+                                    <FiAlertCircle />
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="upload-button-container">
+                        <button
+                            onClick={handleFileUpload}
+                            className="uploadButton"
+                            disabled={!selectedFile}
+                        >
+                            <FiFileText className="button-icon" />
+                            Analyze Document
+                        </button>
+                    </div>
+                </div>
+            ) : loading ? (
+                <div className="loading">
+                    <img src={loadImg} alt="Loading..." className="loading-animation" />
+                </div>
+            ) : (
+                <div className="analysis-container fade-in">
+                    {uploadResult ? (
+                        <>
+                            <h2 className="result-title">Document Analysis Results</h2>
+                            <div className="results-layout">
+                                {/* Document Preview Column */}
+                                <div className="document-preview-column">
+                                    <div className="document-viewer">
+                                        {uploadedFile && uploadedFile.type === 'application/pdf' && filePreviewUrl ? (
+                                            <iframe
+                                                src={filePreviewUrl}
+                                                title="Document Preview"
+                                                className="pdf-preview"
+                                            />
+                                        ) : uploadedFile && docxPreviewHtml ? (
+                                            <div
+                                                className="docx-preview"
+                                                dangerouslySetInnerHTML={{ __html: docxPreviewHtml }}
+                                            />
+                                        ) : (
+                                            <div className="preview-placeholder">
+                                                <img src={docxIcon} alt="Document" className="preview-icon" />
+                                                <p className="preview-text">
+                                                    {uploadedFile?.name || "Document"} preview
+                                                </p>
+                                                <small>Document preview not available</small>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Analysis Results Column */}
+                                <div className="analysis-results-column">
+                                    <div className="report-card">
+                                        <div className="report-section">
+                                            <h3 className="report-heading">Topic:</h3>
+                                            <p className="report-text">{uploadResult?.topic || "No topic available"}</p>
+                                        </div>
+
+                                        <div className="report-section">
+                                            <h3 className="report-heading">Summary</h3>
+                                            <p className="report-text">{uploadResult?.summary || "No summary available"}</p>
+                                        </div>
+
+                                        <div className="report-section">
+                                            <h3 className="report-heading">Document Threat Analysis Rating</h3>
+                                            <p className="report-text">{uploadResult?.security_level || "No security analysis available"}</p>
+                                        </div>
+
+                                        <div className="report-section">
+                                            <h3 className="report-heading">Concerning Language</h3>
+                                            <div className="report-text">
+                                                {uploadResult?.concerning_language && Array.isArray(uploadResult.concerning_language) && uploadResult.concerning_language.length > 0 ? (
+                                                    <ul className="report-list">
+                                                        {uploadResult.concerning_language.map((phrase, index) => (
+                                                            <li key={index}>{phrase}</li>
+                                                        ))}
+                                                    </ul>
+                                                ) : (
+                                                    <p>No concerning language found.</p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <div className="report-section">
+                                            <h3 className="report-heading">Questions to Ask</h3>
+                                            <div className="report-text">
+                                                {uploadResult?.questions && Array.isArray(uploadResult.questions) && uploadResult.questions.length > 0 ? (
+                                                    <ul className="report-list">
+                                                        {uploadResult.questions.map((question, index) => (
+                                                            <li key={index}>{question}</li>
+                                                        ))}
+                                                    </ul>
+                                                ) : (
+                                                    <p>No questions to ask.</p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {currentUploadId && isAuthenticated && (
+                                    <div>
+                                        <button onClick={handleDownloadPDF}>
+                                            ↓ Download PDF
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        </>
+
                     ) : (
-                        <List>
+                        <div className="error-message">
+                            <p>No results available. Please try uploading again.</p>
+                        </div>
+                    )}
+
+                    <div className="new-upload-container">
+                        <button onClick={handleReset} className="uploadButton">
+                            <FiFileText className="button-icon" />
+                            Analyze Another Document
+                        </button>
+                    </div>
+
+                </div>
+            )}            {isAuthenticated && (
+                <div className="past-uploads">
+                    <h3><FiFileText className="section-icon" /> Past Uploads</h3>
+                    {pastUploads.length === 0 ? (
+                        <p className="no-uploads">No past uploads</p>
+                    ) : (
+                        <ul className="uploads-list">
                             {pastUploads.map((upload, index) => {
                                 let icon = upload.filename.toLowerCase().endsWith('.pdf') ? pdfIcon : docxIcon;
                                 return (
-                                    <ListItem
-                                        button
+                                    <li
                                         key={upload._id || index}
-                                        onClick={() => setUploadResult(upload.analysis)}
-                                        sx={{ borderRadius: 2, mb: 1 }}
+                                        className="past-upload-item"
+                                        onClick={() => {
+                                            setUploadResult(upload.analysis);
+                                            setCurrentUploadId(upload._id);
+                                        }}
                                     >
-                                        <Avatar src={icon} alt={upload.filename.split('.').pop()} sx={{ width: 32, height: 32, mr: 2 }} />
-                                        <ListItemText
-                                            primary={upload.filename}
-                                            secondary={new Date(upload.timestamp).toLocaleDateString()}
-                                        />
-                                    </ListItem>
+                                        <img src={icon} alt={`${upload.filename.split('.').pop()} icon`} className="file-icon" />
+                                        <div className="upload-info">
+                                            <span className="filename">{upload.filename}</span>
+                                            <small className="timestamp">
+                                                {new Date(upload.timestamp).toLocaleDateString()}
+                                            </small>
+                                        </div>
+                                    </li>
                                 );
                             })}
-                        </List>
+                        </ul>
                     )}
-                </Box>
+                </div>
             )}
         </section>
     );
