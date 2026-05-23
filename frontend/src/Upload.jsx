@@ -5,8 +5,9 @@ import pdfIcon from './assets/pdf.png';
 import docxIcon from './assets/docx.png';
 import loadImg from './assets/animation.gif';
 import { useAuth0 } from '@auth0/auth0-react';
-import { FiUpload, FiFileText, FiAward, FiShield, FiAlertCircle, FiHelpCircle } from 'react-icons/fi';
+import { FiUpload, FiFileText, FiAlertCircle } from 'react-icons/fi';
 import mammoth from 'mammoth';
+import DocumentChatWidget from './DocumentChatWidget';
 
 const Upload = () => {
     const [uploadResult, setUploadResult] = useState(null);
@@ -192,11 +193,12 @@ const Upload = () => {
             {!uploadResult && !loading ? (
                 <div className="upload-container">
                     <h2 className="upload-title">Upload your document</h2>
-                    <p className="upload-subtitle">AI-powered summaries and risk insights in seconds.</p>
+                    <p className="upload-subtitle"> terms and conditions, privacy policy, etc.</p>
+                    <p className="upload-subtitle"> Receive AI-powered summaries and risk insights in seconds.</p>
 
                     <div className="file-input-container">
                         <FiUpload className="upload-icon pulse" />
-                        <p>Drop your file here or click to browse</p>
+                        <p>Drop your file here or click to browse. Accepts PDF and DOCX files.</p>
                         <input
                             type="file"
                             accept=".pdf, .docx, application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -322,15 +324,17 @@ const Upload = () => {
                                                 )}
                                             </div>
                                         </div>
+                                        {currentUploadId && isAuthenticated && (
+                                            <button
+                                                type="button"
+                                                className="download-pdf-btn"
+                                                onClick={handleDownloadPDF}
+                                            >
+                                                ↓ Download PDF
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
-                                {currentUploadId && isAuthenticated && (
-                                    <div>
-                                        <button onClick={handleDownloadPDF}>
-                                            ↓ Download PDF
-                                        </button>
-                                    </div>
-                                )}
                             </div>
                         </>
 
@@ -348,7 +352,14 @@ const Upload = () => {
                     </div>
 
                 </div>
-            )}            {isAuthenticated && (
+            )}
+
+            <DocumentChatWidget
+                uploadId={currentUploadId}
+                visible={!!uploadResult && !loading}
+            />
+
+            {isAuthenticated && (
                 <div className="past-uploads">
                     <h3><FiFileText className="section-icon" /> Past Uploads</h3>
                     {pastUploads.length === 0 ? (
@@ -364,6 +375,9 @@ const Upload = () => {
                                         onClick={() => {
                                             setUploadResult(upload.analysis);
                                             setCurrentUploadId(upload._id);
+                                            setUploadedFile(null);
+                                            setFilePreviewUrl(null);
+                                            setDocxPreviewHtml(null);
                                         }}
                                     >
                                         <img src={icon} alt={`${upload.filename.split('.').pop()} icon`} className="file-icon" />

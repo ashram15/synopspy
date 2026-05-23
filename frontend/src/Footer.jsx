@@ -7,7 +7,7 @@ export default function Footer() {
       width: '100%',
       py: 4,
       textAlign: 'center',
-      bgcolor: '#f5f5f7',
+      bgcolor: '#EBF9D9',
       borderTop: '1px solid #d2d2d7',
       mt: 8
     }}>

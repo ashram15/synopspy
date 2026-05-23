@@ -3,12 +3,12 @@ import React from 'react';
 import report from './assets/report.png';
 import './App.css';
 import './styles/modern.css';
-import { Box, Typography, Grid } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { FiZap, FiShield, FiCheckCircle } from 'react-icons/fi';
 
 const Features = () => {
     return (
-        <section id="features" style={{ background: '#f5f5f7' }}>
+        <section id="features" style={{ background: '#EBF9D9' }}>
             <Box sx={{
                 maxWidth: 1200,
                 mx: 'auto',
@@ -16,7 +16,7 @@ const Features = () => {
                 py: { xs: 8, md: 12 }
             }}>
                 <Box sx={{ textAlign: 'center', mb: 8 }}>
-                    <Typography variant="h2" sx={{ 
+                    <Typography variant="h2" sx={{
                         fontSize: { xs: '2rem', md: '3rem' },
                         fontWeight: 600,
                         color: '#1d1d1f',
@@ -24,7 +24,7 @@ const Features = () => {
                     }}>
                         Powerful features.
                     </Typography>
-                    <Typography variant="body1" sx={{ 
+                    <Typography variant="body1" sx={{
                         fontSize: '1.25rem',
                         color: '#6e6e73',
                         maxWidth: 700,
@@ -33,50 +33,75 @@ const Features = () => {
                         Everything you need to analyze documents with AI-powered precision.
                     </Typography>
                 </Box>
-                
-                <Grid container spacing={4} sx={{ mb: 8 }}>
-                    <Grid item xs={12} md={4}>
-                        <Box sx={{ textAlign: 'center' }}>
-                            <Box sx={{ mb: 2 }}>
-                                <FiZap size={48} color="#00BF63" />
-                            </Box>
-                            <Typography variant="h5" sx={{ fontWeight: 600, color: '#1d1d1f', mb: 1.5 }}>
-                                Instant Analysis
-                            </Typography>
-                            <Typography variant="body1" color="text.secondary">
-                                Get comprehensive document analysis in seconds with our advanced AI engine.
-                            </Typography>
-                        </Box>
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                        <Box sx={{ textAlign: 'center' }}>
-                            <Box sx={{ mb: 2 }}>
-                                <FiShield size={48} color="#0071e3" />
-                            </Box>
-                            <Typography variant="h5" sx={{ fontWeight: 600, color: '#1d1d1f', mb: 1.5 }}>
-                                Security First
-                            </Typography>
-                            <Typography variant="body1" color="text.secondary">
-                                Automatic detection of security concerns and sensitive information.
-                            </Typography>
-                        </Box>
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                        <Box sx={{ textAlign: 'center' }}>
-                            <Box sx={{ mb: 2 }}>
-                                <FiCheckCircle size={48} color="#00BF63" />
-                            </Box>
-                            <Typography variant="h5" sx={{ fontWeight: 600, color: '#1d1d1f', mb: 1.5 }}>
-                                Smart Insights
-                            </Typography>
-                            <Typography variant="body1" color="text.secondary">
-                                Extract key topics, summaries, and questions automatically.
-                            </Typography>
-                        </Box>
-                    </Grid>
-                </Grid>
 
-                <Box sx={{ 
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: { xs: 'column', md: 'row' },
+                        alignItems: { xs: 'stretch', md: 'center' },
+                        justifyContent: 'space-between',
+                        gap: { xs: 3, md: 4 },
+                        mb: 8,
+                    }}
+                >
+                    {[
+                        {
+                            icon: <FiZap size={44} color="#00BF63" aria-hidden />,
+                            title: 'Instant Analysis',
+                            body: 'Get comprehensive document analysis in seconds with our advanced AI engine.',
+                        },
+                        {
+                            icon: <FiShield size={44} color="#0071e3" aria-hidden />,
+                            title: 'Security First',
+                            body: 'Automatic detection of security concerns and sensitive information.',
+                        },
+                        {
+                            icon: <FiCheckCircle size={44} color="#00BF63" aria-hidden />,
+                            title: 'Smart Insights',
+                            body: 'Extract key topics, summaries, and questions automatically.',
+                        },
+                    ].map(({ icon, title, body }) => (
+                        <Box
+                            key={title}
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                gap: 2,
+                                flex: { md: '1 1 0' },
+                                minWidth: 0,
+                                textAlign: 'left',
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    flexShrink: 0,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    width: 44,
+                                    height: 44,
+                                }}
+                            >
+                                {icon}
+                            </Box>
+                            <Box sx={{ minWidth: 0 }}>
+                                <Typography
+                                    component="h3"
+                                    variant="h5"
+                                    sx={{ fontWeight: 600, color: '#1d1d1f', mb: 0.5, lineHeight: 1.25 }}
+                                >
+                                    {title}
+                                </Typography>
+                                <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.5 }}>
+                                    {body}
+                                </Typography>
+                            </Box>
+                        </Box>
+                    ))}
+                </Box>
+
+                <Box sx={{
                     maxWidth: 900,
                     mx: 'auto',
                     borderRadius: 3,

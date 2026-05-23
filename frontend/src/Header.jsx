@@ -13,7 +13,7 @@ const Header = () => {
       position: 'sticky',
       top: 0,
       zIndex: 1000,
-      bgcolor: 'rgba(255,255,255,0.8)',
+      bgcolor: '#00BF63',
       backdropFilter: 'saturate(180%) blur(20px)',
       borderBottom: '1px solid rgba(0,0,0,0.05)',
     }}>
@@ -27,22 +27,26 @@ const Header = () => {
         alignItems: 'center'
       }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <img src={logo} alt="logo" style={{ height: 32 }} />
-          <Box sx={{ fontSize: '1.125rem', fontWeight: 600, color: '#1d1d1f' }}>SynopSpy</Box>
+          <img src={logo} alt="logo" style={{ height: 64 }} />
+          <Box sx={{ fontSize: '1.125rem', fontWeight: 600, color: '#EBF9D9' }}>SynopSpy</Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
-          <Button href="#features" sx={{ color: '#1d1d1f', fontSize: '0.875rem', fontWeight: 400, textTransform: 'none', '&:hover': { bgcolor: 'transparent' } }}>Features</Button>
-          <Button href="#upload" sx={{ color: '#1d1d1f', fontSize: '0.875rem', fontWeight: 400, textTransform: 'none', '&:hover': { bgcolor: 'transparent' } }}>Upload</Button>
+          <Button href="#features" sx={{ color: '#EBF9D9', fontSize: '1rem', fontWeight: 400, textTransform: 'none', '&:hover': { bgcolor: 'transparent' } }}>Features</Button>
+          <Button href="#upload" sx={{ color: '#EBF9D9', fontSize: '1rem', fontWeight: 400, textTransform: 'none', '&:hover': { bgcolor: 'transparent' } }}>Upload</Button>
           {!isAuthenticated ? (
             <Button
               onClick={() => loginWithRedirect()}
               variant="contained"
               sx={{
-                bgcolor: '#0071e3',
-                color: '#fff',
+                bgcolor: 'transparent',
+                borderColor: '#EBF9D9',
+                color: '#EBF9D9',
                 fontSize: '0.875rem',
                 px: 2,
-                '&:hover': { bgcolor: '#0077ed' },
+                '&:hover': {
+                  borderColor: '#EBF9D9',
+                  bgcolor: 'rgba(0,113,227,0.06)'
+                },
               }}
             >
               Log In
@@ -58,12 +62,13 @@ const Header = () => {
                 onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
                 variant="outlined"
                 sx={{
-                  borderColor: '#0071e3',
-                  color: '#0071e3',
+                  bgcolor: 'transparent',
+                  borderColor: '#EBF9D9',
+                  color: '#EBF9D9',
                   fontSize: '0.875rem',
                   px: 2,
                   '&:hover': {
-                    borderColor: '#0071e3',
+                    borderColor: '#EBF9D9',
                     bgcolor: 'rgba(0,113,227,0.06)',
                   },
                 }}

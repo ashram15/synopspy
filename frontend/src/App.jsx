@@ -17,10 +17,10 @@ const theme = createTheme({
       main: '#000000',
     },
     secondary: {
-      main: '#f5f5f7',
+      main: '#EBF9D9',
     },
     background: {
-      default: '#ffffff',
+      default: '#EBF9D9',
       paper: '#ffffff',
     },
     text: {
@@ -34,20 +34,20 @@ const theme = createTheme({
     fontWeightRegular: 400,
     fontWeightMedium: 500,
     fontWeightBold: 600,
-    h1: { 
-      fontSize: '3.5rem', 
-      fontWeight: 700, 
+    h1: {
+      fontSize: '3.5rem',
+      fontWeight: 700,
       lineHeight: 1.07,
       letterSpacing: '-0.015em'
     },
-    h2: { 
-      fontSize: '2.5rem', 
+    h2: {
+      fontSize: '2.5rem',
       fontWeight: 600,
       lineHeight: 1.1,
       letterSpacing: '-0.01em'
     },
-    h3: { 
-      fontSize: '1.75rem', 
+    h3: {
+      fontSize: '1.75rem',
       fontWeight: 600,
       lineHeight: 1.2
     },
@@ -78,7 +78,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box className="App" sx={{ minHeight: '100vh', bgcolor: '#ffffff' }}>
+      <Box className="App" sx={{ minHeight: '100vh', bgcolor: '#EBF9D9' }}>
         <Header />
         <MainPage />
         <Features />

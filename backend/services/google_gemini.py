@@ -2,13 +2,17 @@ import json
 import tempfile
 import time
 import os
-from fastapi.responses import StreamingResponse
 from google import genai
 from dotenv import load_dotenv
+from core.config import CHAT_MODEL
 
 
 load_dotenv()
 API_KEY = os.getenv("GEMINI_API_KEY")
+
+
+def get_genai_client():
+    return genai.Client(api_key=API_KEY)
 
 
 def handleFile(filetext):
@@ -16,7 +20,7 @@ def handleFile(filetext):
         temp.write(filetext)
         temp_path = temp.name
 
-    client = genai.Client(api_key=API_KEY)
+    client = get_genai_client()
     max_retries = 3
     retry_delay = 2
     try:
@@ -58,3 +62,30 @@ def handleFile(filetext):
     finally:
         if os.path.exists(temp_path):
             os.remove(temp_path)
+
+
+def generate_rag_answer(question: str, retrieved_chunks):
+    client = get_genai_client()
+    if not retrieved_chunks:
+        return "I could not find enough information in this document to answer that question."
+
+    context_blocks = []
+    for chunk in retrieved_chunks:
+        chunk_tag = f"chunk_{chunk.get('chunk_index', 0)}"
+        context_blocks.append(f"[{chunk_tag}] {chunk.get('content', '')}")
+
+    prompt = (
+        "You are a document QA assistant. Answer only using the provided context.\n"
+        "If the context does not contain enough information, say so clearly.\n"
+        "Keep answer concise and factual.\n"
+        "Cite supporting chunks inline like [chunk_3].\n\n"
+        f"Question: {question}\n\n"
+        "Context:\n"
+        + "\n\n".join(context_blocks)
+    )
+
+    response = client.models.generate_content(
+        model=CHAT_MODEL,
+        contents=[prompt],
+    )
+    return response.text.strip()

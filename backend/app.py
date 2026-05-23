@@ -2,16 +2,19 @@ import os
 from datetime import datetime, timezone
 from typing import Optional
 
-from fastapi import FastAPI, UploadFile, File, Depends, HTTPException
+from fastapi import FastAPI, UploadFile, File, Depends, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from bson import ObjectId
+from pydantic import BaseModel
 
 from core.database import db
 from core.security import get_current_user, get_current_user_optional
 from services.file_service import extract_text_from_pdf_bytes, extract_text_from_doc_bytes
 from services.google_gemini import handleFile
+from services.rag_service import ingest_document, answer_document_question
+from core.config import RAG_ENABLED
 
 from services.pdf_generator import generate_analysis_pdf
 from fastapi.responses import StreamingResponse
@@ -21,6 +24,24 @@ import io
 load_dotenv()
 
 app = FastAPI()
+
+
+def _schedule_rag_ingest(
+    background_tasks: BackgroundTasks,
+    user_id: str,
+    upload_id: str,
+    filename: str,
+    text: str,
+    analysis: dict,
+) -> None:
+    if not RAG_ENABLED:
+        return
+
+    def _run_ingest() -> None:
+        ingest_document(user_id, upload_id, filename, text, analysis=analysis)
+
+    background_tasks.add_task(_run_ingest)
+
 
 # Configure CORS and use env variable for frontend URL
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
@@ -68,7 +89,11 @@ async def general_exception_handler(request, exc):
 
 
 @app.post("/upload")
-async def upload_file(file: UploadFile = File(...), user: Optional[dict] = Depends(get_current_user_optional)):
+async def upload_file(
+    background_tasks: BackgroundTasks,
+    file: UploadFile = File(...),
+    user: Optional[dict] = Depends(get_current_user_optional),
+):
     if user:
         print(f"Authenticated upload by user: {user.get('sub')}")
     else:
@@ -114,6 +139,14 @@ async def upload_file(file: UploadFile = File(...), user: Optional[dict] = Depen
                 "timestamp": datetime.now(timezone.utc)
             })
             upload_id = str(result.inserted_id)
+            _schedule_rag_ingest(
+                background_tasks,
+                user["sub"],
+                upload_id,
+                file.filename,
+                text,
+                analysis_result,
+            )
 
         return {
             **analysis_result,
@@ -125,6 +158,10 @@ async def upload_file(file: UploadFile = File(...), user: Optional[dict] = Depen
         print(f"Server Error: {str(e)}")
         raise HTTPException(
             status_code=500, detail="Internal Server Error processing file")
+
+
+class ChatRequest(BaseModel):
+    question: str
 
 
 @app.get("/uploads")
@@ -178,3 +215,45 @@ async def download_analysis_pdf(
         traceback.print_exc()
         raise HTTPException(
             status_code=500, detail=f"Error generating PDF: {str(e)}")
+
+
+@app.post("/uploads/{upload_id}/chat")
+async def chat_about_upload(
+    upload_id: str,
+    payload: ChatRequest,
+    user: dict = Depends(get_current_user),
+):
+    if not RAG_ENABLED:
+        raise HTTPException(
+            status_code=503,
+            detail="Document chat is disabled by configuration.",
+        )
+    question = payload.question.strip()
+    if not question:
+        raise HTTPException(
+            status_code=400, detail="Question cannot be empty.")
+
+    try:
+        upload = await db.uploads.find_one({
+            "_id": ObjectId(upload_id),
+            "user_id": user["sub"],
+        })
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid upload id.")
+
+    if not upload:
+        raise HTTPException(status_code=404, detail="Upload not found.")
+
+    try:
+        result = answer_document_question(
+            user_id=user["sub"],
+            upload_id=upload_id,
+            question=question,
+        )
+        return result
+    except Exception as e:
+        print(f"RAG chat error: {type(e).__name__}: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to answer question about this document.",
+        )
