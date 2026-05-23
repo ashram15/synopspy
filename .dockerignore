@@ -8,8 +8,10 @@ __pycache__/
 .venv/
 venv/
 ENV/
+backend/.venv/
+**/.pytest_cache/
 
-# Frontend
+# Frontend and local packages
 frontend/
 node_modules/
 
@@ -23,14 +25,11 @@ node_modules/
 .git/
 .gitignore
 
-# Environment
+# Environment and local-only files
 .env
 .env.local
+backend/.env
+*.log
 
-# Tests
-backend/tests/
-*.pytest_cache/
-
-# Documentation
-README.md
+# OS files
 .DS_Store
