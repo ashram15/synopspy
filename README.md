@@ -16,7 +16,8 @@
 ### [Click Here to Launch Live App](https://synopspy.onrender.com)
 *(Note: App is deployed on Render Free Tier. Please allow ~60–120 seconds for the server to spin up on first load.)*
 
-![synopspy_demo.gif](frontend/src/assets/synopspy2.0.gif)
+https://github.com/user-attachments/assets/053fed21-967a-41af-8e42-444c72244f7e
+
 
 SynopSpy is a full-stack web application that helps users understand and assess complex documents—legal fine print, contracts, terms and conditions, training materials, and more. It uses **Google Gemini** for upload-time analysis (summaries, risk ratings, flagged language) and a **RAG-powered document chatbot** so authenticated users can ask grounded questions about each uploaded file.
 
