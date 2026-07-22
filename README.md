@@ -14,10 +14,9 @@
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
 ### [Click Here to Launch Live App](https://synopspy.onrender.com)
-*(Note: App is deployed on Render Free Tier. Please allow ~60–120 seconds for the server to spin up on first load.)*
 
-https://github.com/user-attachments/assets/053fed21-967a-41af-8e42-444c72244f7e
 
+![synopspy_demo.gif](frontend/src/assets/synopspy2.0.gif)
 
 SynopSpy is a full-stack web application that helps users understand and assess complex documents—legal fine print, contracts, terms and conditions, training materials, and more. It uses **Google Gemini** for upload-time analysis (summaries, risk ratings, flagged language) and a **RAG-powered document chatbot** so authenticated users can ask grounded questions about each uploaded file.
 
@@ -36,7 +35,7 @@ SynopSpy is a full-stack web application that helps users understand and assess 
 
 ## Document Chatbot & RAG Pipeline
 
-The chatbot is **not** a generic ChatGPT wrapper. Each conversation is scoped to a single `upload_id` using vector search + metadata filters.
+Each chatbot conversation is scoped to a single `upload_id` using vector search + metadata filters.
 
 ### How it works
 
@@ -55,24 +54,6 @@ The chatbot is **not** a generic ChatGPT wrapper. Each conversation is scoped to
 | **Per-document isolation** | `filters={"document_id": {"$eq": upload_id}}` on every query |
 | **Floating UI** | Chat button bottom-right; analysis stays a two-column layout |
 
-### Backend modules
-
-| File | Role |
-|------|------|
-| `backend/services/rag_engine.py` | Chunking, embed, upsert, query, Gemini chat |
-| `backend/services/rag_service.py` | FastAPI-facing ingest / Q&A wrappers |
-| `frontend/src/DocumentChatWidget.jsx` | Floating chat FAB + panel |
-
-### API endpoints
-
-| Method | Path | Description |
-|--------|------|-------------|
-| `POST` | `/upload` | Analyze file; triggers RAG ingest when authenticated + `RAG_ENABLED=true` |
-| `POST` | `/uploads/{upload_id}/chat` | Body: `{ "question": "..." }` — document-scoped RAG answer |
-| `GET` | `/uploads` | List user's past uploads |
-| `GET` | `/analysis/{upload_id}/pdf` | Download analysis PDF |
-
----
 
 ## System Architecture  
 
@@ -105,7 +86,7 @@ graph TD
 
 ---
 
-## Technologies 
+## Tech Stack 
 
 | Layer | Stack |
 |-------|--------|
@@ -141,8 +122,6 @@ FRONTEND_URL=http://localhost:5173
 RAG_ENABLED=true
 SUPABASE_URL=https://<project-ref>.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=
-# Direct Postgres URL for vecs (Dashboard → Settings → Database)
-# URL-encode special characters in the password (@ → %40, % → %25, etc.)
 SUPABASE_DB_CONNECTION_STRING=postgresql://postgres.<ref>:<password>@<host>:6543/postgres
 
 EMBEDDING_MODEL=gemini-embedding-001
@@ -154,21 +133,6 @@ CHUNK_SIZE=1000
 CHUNK_OVERLAP=150
 ```
 
-**Notes:**
-
-- Set `RAG_ENABLED=false` to disable chat (returns `503` on `/chat`).
-- After changing embedding model or dimension, **re-upload** documents so vectors are re-ingested.
-- The `vecs` collection dimension must match `EMBEDDING_DIMENSION` (default **768**).
-
-### Frontend
-
-```env
-VITE_BACKEND_URL=http://localhost:8000
-```
-
-(Auth0 settings in your existing frontend env as configured.)
-
----
 
 ## How to Run Locally
 
@@ -216,19 +180,6 @@ PYTHONPATH=. pytest
 - API route / feature-flag behavior (`RAG_ENABLED`)
 - RAG chunking (`tests/test_rag_engine.py`)
 - Query expansion helpers (`tests/test_rag_query_expand.py`)
-
----
-
-## Validating the Chatbot
-
-Suggested checks after enabling RAG:
-
-1. **In-document:** “What is this document about?” / “Who are the parties?”
-2. **Specific:** “What does Module 2 include?” (for slides with `MODULE 02` headings)
-3. **Hallucination:** Ask about something **not** in the file → expect *I cannot find this in the document.*
-4. **Isolation:** Open a different past upload and confirm answers don’t leak from another file.
-
-**Re-upload** after backend/RAG config changes so embeddings stay in sync.
 
 ---
 
