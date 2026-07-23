@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { FiMessageCircle, FiX, FiSend } from 'react-icons/fi';
 
-const DocumentChatWidget = ({ uploadId, visible }) => {
+const DocumentChatWidget = ({ uploadId, visible, isOpen, onOpenChange }) => {
     const { getAccessTokenSilently, isAuthenticated } = useAuth0();
-    const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([]);
     const [questionInput, setQuestionInput] = useState('');
     const [isAsking, setIsAsking] = useState(false);
@@ -18,10 +17,10 @@ const DocumentChatWidget = ({ uploadId, visible }) => {
     }, [uploadId]);
 
     useEffect(() => {
-        if (!visible) {
-            setIsOpen(false);
+        if (!visible && isOpen) {
+            onOpenChange?.(false);
         }
-    }, [visible]);
+    }, [visible, isOpen, onOpenChange]);
 
     async function handleAskQuestion(event) {
         event.preventDefault();
@@ -67,6 +66,7 @@ const DocumentChatWidget = ({ uploadId, visible }) => {
     }
 
     const canChat = isAuthenticated && uploadId;
+    const setOpen = (next) => onOpenChange?.(next);
 
     if (!visible) {
         return null;
@@ -88,7 +88,7 @@ const DocumentChatWidget = ({ uploadId, visible }) => {
                         <button
                             type="button"
                             className="chat-widget-close"
-                            onClick={() => setIsOpen(false)}
+                            onClick={() => setOpen(false)}
                             aria-label="Close chat"
                         >
                             <FiX />
@@ -145,11 +145,18 @@ const DocumentChatWidget = ({ uploadId, visible }) => {
             <button
                 type="button"
                 className={`chat-widget-fab ${isOpen ? 'chat-widget-fab--open' : ''}`}
-                onClick={() => setIsOpen((open) => !open)}
+                onClick={() => setOpen(!isOpen)}
                 aria-label={isOpen ? 'Close document chat' : 'Open document chat'}
                 aria-expanded={isOpen}
             >
-                {isOpen ? <FiX /> : <FiMessageCircle />}
+                {isOpen ? (
+                    <FiX className="chat-widget-fab-icon" />
+                ) : (
+                    <>
+                        <FiMessageCircle className="chat-widget-fab-icon" />
+                        <span className="chat-widget-fab-label">Ask this document</span>
+                    </>
+                )}
             </button>
         </div>
     );

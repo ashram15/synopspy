@@ -49,7 +49,7 @@ Each chatbot conversation is scoped to a single `upload_id` using vector search 
 
 | Choice | Rationale |
 |--------|-----------|
-| **Gemini only** (no OpenAI) | Same API key as analysis; free tier friendly |
+| **Google  Gemini** | Same API key as analysis; free tier friendly |
 | **vecs + Postgres** | Native Supabase vector store; no LangChain/LlamaIndex |
 | **Per-document isolation** | `filters={"document_id": {"$eq": upload_id}}` on every query |
 | **Floating UI** | Chat button bottom-right; analysis stays a two-column layout |

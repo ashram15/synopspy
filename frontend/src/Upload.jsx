@@ -5,7 +5,7 @@ import pdfIcon from './assets/pdf.png';
 import docxIcon from './assets/docx.png';
 import loadImg from './assets/animation.gif';
 import { useAuth0 } from '@auth0/auth0-react';
-import { FiUpload, FiFileText, FiAlertCircle } from 'react-icons/fi';
+import { FiUpload, FiFileText, FiAlertCircle, FiMessageCircle } from 'react-icons/fi';
 import mammoth from 'mammoth';
 import DocumentChatWidget from './DocumentChatWidget';
 
@@ -18,7 +18,8 @@ const Upload = () => {
     const [filePreviewUrl, setFilePreviewUrl] = useState(null);
     const [docxPreviewHtml, setDocxPreviewHtml] = useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
-    const { getAccessTokenSilently, isAuthenticated } = useAuth0();
+    const [chatOpen, setChatOpen] = useState(false);
+    const { getAccessTokenSilently, isAuthenticated, loginWithRedirect } = useAuth0();
 
     // Fetch past uploads when component mounts (only if authenticated)
     useEffect(() => {
@@ -66,6 +67,7 @@ const Upload = () => {
         setFilePreviewUrl(null);
         setDocxPreviewHtml(null);
         setLoading(false);
+        setChatOpen(false);
     };
 
     async function handleDownloadPDF() {
@@ -250,6 +252,37 @@ const Upload = () => {
                     {uploadResult ? (
                         <>
                             <h2 className="result-title">Document Analysis Results</h2>
+                            {isAuthenticated && currentUploadId ? (
+                                <button
+                                    type="button"
+                                    className="chat-cta-banner"
+                                    onClick={() => setChatOpen(true)}
+                                >
+                                    <span className="chat-cta-banner-icon" aria-hidden>
+                                        <FiMessageCircle />
+                                    </span>
+                                    <span className="chat-cta-banner-copy">
+                                        <strong>Ask questions about this document</strong>
+                                        <span>Get answers grounded only in this upload</span>
+                                    </span>
+                                    <span className="chat-cta-banner-action">Open chat</span>
+                                </button>
+                            ) : !isAuthenticated ? (
+                                <button
+                                    type="button"
+                                    className="chat-cta-banner chat-cta-banner--guest"
+                                    onClick={() => loginWithRedirect()}
+                                >
+                                    <span className="chat-cta-banner-icon" aria-hidden>
+                                        <FiMessageCircle />
+                                    </span>
+                                    <span className="chat-cta-banner-copy">
+                                        <strong>Want to chat with this document?</strong>
+                                        <span>Sign in to ask grounded questions (saved to your account only)</span>
+                                    </span>
+                                    <span className="chat-cta-banner-action">Sign in</span>
+                                </button>
+                            ) : null}
                             <div className="results-layout">
                                 {/* Document Preview Column */}
                                 <div className="document-preview-column">
@@ -356,7 +389,9 @@ const Upload = () => {
 
             <DocumentChatWidget
                 uploadId={currentUploadId}
-                visible={!!uploadResult && !loading}
+                visible={!!uploadResult && !loading && isAuthenticated && !!currentUploadId}
+                isOpen={chatOpen}
+                onOpenChange={setChatOpen}
             />
 
             {isAuthenticated && (
