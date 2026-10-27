@@ -1,34 +1,14 @@
 """
-Supabase client stubs.
+RAG configuration helpers.
 
-The application previously used Supabase REST endpoints for storing and
-matching document chunks. Those runtime calls are disabled so RAG-related
-networking does not occur. Re-implement these helpers if/when you re-enable
-the RAG pipeline.
+Document vectors are stored via ``services.rag_engine`` using the official
+``vecs`` client and ``SUPABASE_DB_CONNECTION_STRING``. There is no REST-based
+``document_chunks`` path at runtime.
 """
 
-from typing import Any, Dict, List
+from core.config import RAG_ENABLED, SUPABASE_DB_CONNECTION_STRING
 
 
-def is_supabase_configured() -> bool:
-    return False
-
-
-def delete_chunks_for_upload(user_id: str, upload_id: str) -> None:
-    # No-op when RAG is disabled.
-    return
-
-
-def insert_chunks(rows: List[Dict[str, Any]]) -> None:
-    # No-op when RAG is disabled.
-    return
-
-
-def match_document_chunks(
-    query_embedding: List[float],
-    user_id: str,
-    upload_id: str,
-    match_count: int,
-) -> List[Dict[str, Any]]:
-    # Return empty hits when RAG is disabled.
-    return []
+def is_rag_store_configured() -> bool:
+    """True when RAG is enabled and a Postgres connection string is set for vecs."""
+    return bool(RAG_ENABLED and SUPABASE_DB_CONNECTION_STRING.strip())

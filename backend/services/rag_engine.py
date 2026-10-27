@@ -7,24 +7,30 @@ No LangChain / LlamaIndex / OpenAI — uses google-genai + vecs only.
 from __future__ import annotations
 
 import logging
-import os
 import re
 from typing import Any, List, Optional, Sequence, Tuple
 
 import vecs
-from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
-load_dotenv()
+from core.config import (
+    CHAT_MODEL,
+    CHUNK_OVERLAP,
+    CHUNK_SIZE,
+    EMBED_BATCH_SIZE,
+    EMBEDDING_DIMENSION,
+    EMBEDDING_MODEL,
+    GEMINI_API_KEY,
+    MAX_DOC_CHARS,
+    RAG_COLLECTION_NAME,
+    RAG_TOP_K,
+    SUPABASE_DB_CONNECTION_STRING,
+)
 
 logger = logging.getLogger(__name__)
 
-COLLECTION_NAME = os.getenv("RAG_COLLECTION_NAME", "contract_documents")
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "gemini-embedding-001")
-EMBEDDING_DIMENSION = int(os.getenv("EMBEDDING_DIMENSION", "768"))
-CHAT_MODEL = os.getenv("CHAT_MODEL", "gemini-2.5-flash")
-RAG_TOP_K = int(os.getenv("RAG_TOP_K", "8"))
+COLLECTION_NAME = RAG_COLLECTION_NAME
 
 NOT_FOUND_REPLY = "I cannot find this in the document."
 
@@ -33,25 +39,24 @@ VectorRecord = Tuple[str, List[float], dict[str, Any]]
 _genai_client: Optional[genai.Client] = None
 _vecs_client: Any = None
 _contract_collection: Any = None
+_index_ensured: bool = False
 
 
 def _get_genai_client() -> genai.Client:
     global _genai_client
     if _genai_client is None:
-        api_key = os.getenv("GEMINI_API_KEY")
-        if not api_key:
+        if not GEMINI_API_KEY:
             raise RuntimeError("GEMINI_API_KEY is not configured")
-        _genai_client = genai.Client(api_key=api_key)
+        _genai_client = genai.Client(api_key=GEMINI_API_KEY)
     return _genai_client
 
 
 def _get_contract_collection():
     global _vecs_client, _contract_collection
     if _contract_collection is None:
-        conn = os.getenv("SUPABASE_DB_CONNECTION_STRING")
-        if not conn:
+        if not SUPABASE_DB_CONNECTION_STRING:
             raise RuntimeError("SUPABASE_DB_CONNECTION_STRING is not configured")
-        _vecs_client = vecs.create_client(conn)
+        _vecs_client = vecs.create_client(SUPABASE_DB_CONNECTION_STRING)
         _contract_collection = _vecs_client.get_or_create_collection(
             name=COLLECTION_NAME,
             dimension=EMBEDDING_DIMENSION,
@@ -59,10 +64,27 @@ def _get_contract_collection():
     return _contract_collection
 
 
+def _ensure_collection_index(collection: Any) -> None:
+    """Create the vecs index once per process; skip on subsequent uploads."""
+    global _index_ensured
+    if _index_ensured:
+        return
+    try:
+        collection.create_index()
+        _index_ensured = True
+        logger.info("Index created/updated on collection '%s'", COLLECTION_NAME)
+    except Exception as exc:
+        logger.warning(
+            "create_index on '%s' failed (search may still work): %s",
+            COLLECTION_NAME,
+            exc,
+        )
+
+
 def chunk_document(
     text: str,
-    chunk_size: int = 1000,
-    chunk_overlap: int = 150,
+    chunk_size: int = CHUNK_SIZE,
+    chunk_overlap: int = CHUNK_OVERLAP,
 ) -> list[str]:
     """
     Split document text with a character-based sliding window snapped to word
@@ -128,24 +150,30 @@ def _embed_texts(texts: Sequence[str], *, task_type: str = "RETRIEVAL_DOCUMENT")
     if not texts:
         return []
 
+    batch_size = max(1, EMBED_BATCH_SIZE)
+    embeddings: list[list[float]] = []
+
     try:
-        response = _get_genai_client().models.embed_content(
-            model=EMBEDDING_MODEL,
-            contents=list(texts),
-            config=_embed_config(task_type),
-        )
-        embeddings: list[list[float]] = []
-        for item in response.embeddings:
-            values = list(item.values)
-            if len(values) != EMBEDDING_DIMENSION:
-                raise ValueError(
-                    f"Expected {EMBEDDING_DIMENSION}-dim embedding, got {len(values)}"
-                )
-            embeddings.append(values)
-        if len(embeddings) != len(texts):
-            raise ValueError(
-                f"Embedding count mismatch: got {len(embeddings)} for {len(texts)} inputs"
+        for start in range(0, len(texts), batch_size):
+            batch = list(texts[start : start + batch_size])
+            response = _get_genai_client().models.embed_content(
+                model=EMBEDDING_MODEL,
+                contents=batch,
+                config=_embed_config(task_type),
             )
+            batch_embeddings: list[list[float]] = []
+            for item in response.embeddings:
+                values = list(item.values)
+                if len(values) != EMBEDDING_DIMENSION:
+                    raise ValueError(
+                        f"Expected {EMBEDDING_DIMENSION}-dim embedding, got {len(values)}"
+                    )
+                batch_embeddings.append(values)
+            if len(batch_embeddings) != len(batch):
+                raise ValueError(
+                    f"Embedding count mismatch: got {len(batch_embeddings)} for {len(batch)} inputs"
+                )
+            embeddings.extend(batch_embeddings)
         return embeddings
     except Exception as exc:
         logger.exception("Gemini embedding request failed: %s", exc)
@@ -191,7 +219,7 @@ def embed_and_store(
     analysis: Optional[dict[str, Any]] = None,
 ) -> dict[str, Any]:
     """
-    Chunk a document, embed each chunk, upsert into vecs, and refresh the index.
+    Chunk a document, embed each chunk, upsert into vecs, and ensure the index exists.
     """
     if not document_id or not document_id.strip():
         raise ValueError("document_id is required")
@@ -200,7 +228,17 @@ def embed_and_store(
         return {"document_id": document_id, "chunks_stored": 0}
 
     try:
-        chunks = chunk_document(raw_text)
+        text = raw_text
+        if MAX_DOC_CHARS > 0 and len(text) > MAX_DOC_CHARS:
+            logger.warning(
+                "Truncating document_id=%s from %d to %d chars",
+                document_id,
+                len(text),
+                MAX_DOC_CHARS,
+            )
+            text = text[:MAX_DOC_CHARS]
+
+        chunks = chunk_document(text, chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP)
         for extra in _build_supplemental_chunks(analysis):
             if extra.strip():
                 chunks.append(extra)
@@ -209,11 +247,12 @@ def embed_and_store(
             return {"document_id": document_id, "chunks_stored": 0}
 
         logger.info(
-            "Embedding %d chunk(s) for document_id=%s (%s) via %s",
+            "Embedding %d chunk(s) for document_id=%s (%s) via %s (batch_size=%d)",
             len(chunks),
             document_id,
             document_name,
             EMBEDDING_MODEL,
+            EMBED_BATCH_SIZE,
         )
 
         embeddings = _embed_texts(chunks, task_type="RETRIEVAL_DOCUMENT")
@@ -232,8 +271,9 @@ def embed_and_store(
                 )
             )
 
+        collection = _get_contract_collection()
         try:
-            _get_contract_collection().delete(
+            collection.delete(
                 filters={"document_id": {"$eq": document_id}},
             )
         except Exception as exc:
@@ -243,18 +283,10 @@ def embed_and_store(
                 exc,
             )
 
-        _get_contract_collection().upsert(records=vectors)
+        collection.upsert(records=vectors)
         logger.info("Upserted %d vector(s) for document_id=%s", len(vectors), document_id)
 
-        try:
-            _get_contract_collection().create_index()
-            logger.info("Index created/updated on collection '%s'", COLLECTION_NAME)
-        except Exception as exc:
-            logger.warning(
-                "create_index on '%s' failed (search may still work): %s",
-                COLLECTION_NAME,
-                exc,
-            )
+        _ensure_collection_index(collection)
 
         return {
             "document_id": document_id,
@@ -332,7 +364,41 @@ def _document_qa_prompt(context: str) -> str:
     )
 
 
-def query_contract(document_id: str, user_query: str, top_k: int = 4) -> str:
+def document_vector_count(document_id: str, sample_limit: int = 8) -> int:
+    """
+    Return how many indexed chunks exist for a document_id in vecs.
+
+    Used to recover legacy uploads that were ingested before Mongo started
+    tracking rag_status / extracted_text.
+    """
+    if not document_id or not document_id.strip():
+        return 0
+    try:
+        # Cosine search against a zero vector is enough to discover whether any
+        # filtered rows exist; we only care about presence/count, not ranking.
+        probe = [0.0] * EMBEDDING_DIMENSION
+        matches = _get_contract_collection().query(
+            data=probe,
+            limit=max(1, sample_limit),
+            filters={"document_id": {"$eq": document_id}},
+            include_metadata=False,
+            include_value=False,
+        )
+        return len(matches or [])
+    except Exception as exc:
+        logger.warning(
+            "document_vector_count failed for document_id=%s: %s",
+            document_id,
+            exc,
+        )
+        return 0
+
+
+def query_contract(
+    document_id: str,
+    user_query: str,
+    top_k: Optional[int] = None,
+) -> str:
     """
     Retrieve document-scoped context via vector search, then answer with Gemini.
     """
@@ -347,7 +413,7 @@ def query_contract(document_id: str, user_query: str, top_k: int = 4) -> str:
         search_query = _expand_search_query(query_text)
         query_embedding = _embed_texts([search_query], task_type="RETRIEVAL_QUERY")[0]
 
-        effective_top_k = top_k if top_k > 0 else RAG_TOP_K
+        effective_top_k = top_k if top_k is not None and top_k > 0 else RAG_TOP_K
         matches = _get_contract_collection().query(
             data=query_embedding,
             limit=effective_top_k,
