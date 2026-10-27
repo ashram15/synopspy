@@ -12,7 +12,7 @@ export default function Footer() {
       mt: 8
     }}>
       <Typography variant="body2" sx={{ color: '#6e6e73', fontSize: '0.875rem' }}>
-        © 2025 SynopSpy. All rights reserved.
+        © 2026 SynopSpy. All rights reserved.
       </Typography>
     </Box>
   );

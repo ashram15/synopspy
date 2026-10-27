@@ -195,8 +195,7 @@ const Upload = () => {
             {!uploadResult && !loading ? (
                 <div className="upload-container">
                     <h2 className="upload-title">Upload your document</h2>
-                    <p className="upload-subtitle"> terms and conditions, privacy policy, etc.</p>
-                    <p className="upload-subtitle"> Receive AI-powered summaries and risk insights in seconds.</p>
+                    <p className="upload-subtitle">Drop in any terms, policy, or form. Get a clear summary and risk rating in seconds.</p>
 
                     <div className="file-input-container">
                         <FiUpload className="upload-icon pulse" />

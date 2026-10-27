@@ -2,7 +2,7 @@ import { Box, Button } from '@mui/material';
 import Typewriter from 'typewriter-effect';
 import logo from './assets/synopspy_logo.png';
 
-const HERO_TAGLINE = 'Get AI-powered document analysis in seconds.';
+const HERO_TAGLINE = 'Know what you\'re agreeing to. Get AI-powered document analysis in seconds.';
 
 const MainPage = () => {
   return (
@@ -46,14 +46,14 @@ const MainPage = () => {
           href="#upload"
           variant="contained"
           sx={{
-            bgcolor: '#0071e3',
+            bgcolor: '#4a4a4a',
             color: '#fff',
             px: 3,
             py: 1.25,
             fontSize: '1.0625rem',
             fontWeight: 400,
             borderRadius: 980,
-            '&:hover': { bgcolor: '#0077ed' }
+            '&:hover': { bgcolor: '#333333' }
           }}
         >
           Get started
@@ -62,14 +62,14 @@ const MainPage = () => {
           href="#features"
           variant="outlined"
           sx={{
-            borderColor: '#0071e3',
-            color: '#0071e3',
+            borderColor: '#4a4a4a',
+            color: '#4a4a4a',
             px: 3,
             py: 1.25,
             fontSize: '1.0625rem',
             fontWeight: 400,
             borderRadius: 980,
-            '&:hover': { bgcolor: 'rgba(0,113,227,0.04)', borderColor: '#0071e3' }
+            '&:hover': { bgcolor: 'rgba(74,74,74,0.06)', borderColor: '#333333' }
           }}
         >
           Learn more

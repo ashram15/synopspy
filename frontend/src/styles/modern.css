@@ -57,6 +57,8 @@ body {
     text-align: center;
     color: #6e6e73;
     margin: 0 0 1.5rem;
+    font-size: clamp(1.125rem, 1.8vw, 1.35rem);
+    line-height: 1.5;
 }
 
 .file-input-container {
