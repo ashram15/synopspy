@@ -19,6 +19,8 @@ const Upload = () => {
     const [docxPreviewHtml, setDocxPreviewHtml] = useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
     const [chatOpen, setChatOpen] = useState(false);
+    const [ragStatus, setRagStatus] = useState(null);
+    const [ragError, setRagError] = useState('');
     const { getAccessTokenSilently, isAuthenticated, loginWithRedirect } = useAuth0();
 
     // Fetch past uploads when component mounts (only if authenticated)
@@ -27,6 +29,49 @@ const Upload = () => {
             fetchPastUploads();
         }
     }, [isAuthenticated]);
+
+    useEffect(() => {
+        if (!isAuthenticated || !currentUploadId || ragStatus !== 'pending') {
+            return undefined;
+        }
+
+        let cancelled = false;
+        let timerId;
+
+        async function pollRagStatus() {
+            try {
+                const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+                const token = await getAccessTokenSilently({
+                    audience: 'https://synopspy-backend.com/api',
+                });
+                const response = await fetch(
+                    `${BACKEND_URL}/uploads/${currentUploadId}/rag-status`,
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }
+                );
+                if (!response.ok) return;
+                const data = await response.json();
+                if (cancelled) return;
+                setRagStatus(data.rag_status || 'unknown');
+                setRagError(data.rag_error || '');
+                if (data.rag_status === 'pending') {
+                    timerId = setTimeout(pollRagStatus, 1500);
+                }
+            } catch (error) {
+                console.error('Error polling RAG status:', error);
+                if (!cancelled) {
+                    timerId = setTimeout(pollRagStatus, 2500);
+                }
+            }
+        }
+
+        pollRagStatus();
+        return () => {
+            cancelled = true;
+            if (timerId) clearTimeout(timerId);
+        };
+    }, [isAuthenticated, currentUploadId, ragStatus, getAccessTokenSilently]);
 
     async function fetchPastUploads() {
         try {
@@ -68,7 +113,39 @@ const Upload = () => {
         setDocxPreviewHtml(null);
         setLoading(false);
         setChatOpen(false);
+        setRagStatus(null);
+        setRagError('');
     };
+
+    async function ensureRagForUpload(uploadId) {
+        setRagStatus('pending');
+        setRagError('');
+        try {
+            const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+            const token = await getAccessTokenSilently({
+                audience: 'https://synopspy-backend.com/api',
+            });
+            const response = await fetch(
+                `${BACKEND_URL}/uploads/${uploadId}/ensure-rag`,
+                {
+                    method: 'POST',
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                setRagStatus('failed');
+                setRagError(data.detail || 'Failed to prepare document chat.');
+                return;
+            }
+            setRagStatus(data.rag_status || 'ready');
+            setRagError(data.rag_error || '');
+        } catch (error) {
+            console.error('Error ensuring RAG for upload:', error);
+            setRagStatus('failed');
+            setRagError(error.message || 'Failed to prepare document chat.');
+        }
+    }
 
     async function handleDownloadPDF() {
         if (!currentUploadId || !isAuthenticated) return;
@@ -168,10 +245,12 @@ const Upload = () => {
                     return;
                 }
 
-                // Extract upload_id if present
-                const { upload_id, ...analysisData } = result;
+                // Extract upload_id / rag_status if present
+                const { upload_id, rag_status, ...analysisData } = result;
                 setUploadResult(analysisData);
                 setCurrentUploadId(upload_id || null);
+                setRagStatus(rag_status || (upload_id ? 'pending' : null));
+                setRagError('');
                 if (isAuthenticated) fetchPastUploads();
             } else {
                 let errorMessage = "File upload failed";
@@ -256,15 +335,28 @@ const Upload = () => {
                                     type="button"
                                     className="chat-cta-banner"
                                     onClick={() => setChatOpen(true)}
+                                    disabled={ragStatus === 'pending'}
                                 >
                                     <span className="chat-cta-banner-icon" aria-hidden>
                                         <FiMessageCircle />
                                     </span>
                                     <span className="chat-cta-banner-copy">
-                                        <strong>Ask questions about this document</strong>
-                                        <span>Get answers grounded only in this upload</span>
+                                        <strong>
+                                            {ragStatus === 'pending'
+                                                ? 'Preparing document chat…'
+                                                : ragStatus === 'failed' || ragStatus === 'unavailable'
+                                                    ? 'Document chat unavailable'
+                                                    : 'Ask questions about this document'}
+                                        </strong>
+                                        <span>
+                                            {ragStatus === 'pending'
+                                                ? 'Indexing this upload for grounded answers'
+                                                : ragError || 'Get answers grounded only in this upload'}
+                                        </span>
                                     </span>
-                                    <span className="chat-cta-banner-action">Open chat</span>
+                                    <span className="chat-cta-banner-action">
+                                        {ragStatus === 'pending' ? 'Indexing' : 'Open chat'}
+                                    </span>
                                 </button>
                             ) : !isAuthenticated ? (
                                 <button
@@ -391,6 +483,8 @@ const Upload = () => {
                 visible={!!uploadResult && !loading && isAuthenticated && !!currentUploadId}
                 isOpen={chatOpen}
                 onOpenChange={setChatOpen}
+                ragStatus={ragStatus}
+                ragError={ragError}
             />
 
             {isAuthenticated && (
@@ -412,6 +506,13 @@ const Upload = () => {
                                             setUploadedFile(null);
                                             setFilePreviewUrl(null);
                                             setDocxPreviewHtml(null);
+                                            setChatOpen(false);
+                                            if (upload.rag_status === 'ready') {
+                                                setRagStatus('ready');
+                                                setRagError('');
+                                            } else {
+                                                ensureRagForUpload(upload._id);
+                                            }
                                         }}
                                     >
                                         <img src={icon} alt={`${upload.filename.split('.').pop()} icon`} className="file-icon" />

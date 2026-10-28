@@ -39,12 +39,13 @@ Each chatbot conversation is scoped to a single `upload_id` using vector search 
 
 ### How it works
 
-1. **Upload (authenticated):** After analysis, the backend extracts text (PDF via PyMuPDF, DOCX via python-docx) and runs **background ingestion**.
-2. **Chunking:** Sliding-window chunks (~1000 characters, ~150 overlap) on word boundaries (`rag_engine.chunk_document`).
-3. **Embeddings:** **Gemini** `gemini-embedding-001` (768 dimensions) via the official `google-genai` SDK.
-4. **Vector store:** Chunks are upserted into Supabase **pgvector** using the official **`vecs`** client (`contract_documents` collection).
-5. **Chat:** User question → query embedding → cosine search with `document_id` filter → top-k chunks → **Gemini** `gemini-2.5-flash` answers using **only** retrieved context. If the answer is not in the document, the model responds: *"I cannot find this in the document."*
-
+1. **Upload (authenticated):** After analysis, the backend stores extracted text, sets `rag_status=pending`, and runs **background ingestion**. Chat stays gated until status is `ready`.
+2. **Duplicate-upload cache:** For signed-in users, SynopSpy stores a SHA-256 `content_hash` of the file bytes. Re-uploading the same file for the same account returns the existing MongoDB analysis (`cache_hit: true`) and **skips the Gemini analysis call**. If chat indexing is already `ready`, RAG ingest is skipped too; otherwise only ingest is (re)scheduled.
+3. **Chunking:** Sliding-window chunks (`CHUNK_SIZE` / `CHUNK_OVERLAP`, defaults 1000 / 150) on word boundaries (`rag_engine.chunk_document`), capped by `MAX_DOC_CHARS`.
+4. **Embeddings:** **Gemini** `gemini-embedding-001` (768 dimensions) via the official `google-genai` SDK, in batches of `EMBED_BATCH_SIZE`.
+5. **Vector store:** Chunks are upserted into Supabase **pgvector** using the official **`vecs`** client (`contract_documents` collection). Enable the `vector` extension only — vecs manages its own schema (do not create a manual `document_chunks` table).
+6. **Chat:** User question → query embedding → cosine search with `document_id` filter → top-`RAG_TOP_K` chunks → **Gemini** `gemini-2.5-flash` answers using **only** retrieved context. If the answer is not in the document, the model responds: *"I cannot find this in the document."*
+7. **Past uploads:** Re-opening a history item calls `POST /uploads/{id}/ensure-rag` to (re)index when needed. Uploads created before text was stored must be re-uploaded.
 ### Design choices
 
 | Choice | Rationale |
@@ -52,10 +53,13 @@ Each chatbot conversation is scoped to a single `upload_id` using vector search 
 | **Google  Gemini** | Same API key as analysis; free tier friendly |
 | **vecs + Postgres** | Native Supabase vector store; no LangChain/LlamaIndex |
 | **Per-document isolation** | `filters={"document_id": {"$eq": upload_id}}` on every query |
+| **Per-user content-hash cache** | Same file + same account reuses Mongo analysis; skips Gemini |
 | **Floating UI** | Chat button bottom-right; analysis stays a two-column layout |
 
 
 ## System Architecture  
+
+See the detailed request flow in the [sequence diagram](docs/sequence-diagram.md).
 
 ```mermaid
 graph TD
@@ -131,6 +135,8 @@ RAG_COLLECTION_NAME=contract_documents
 RAG_TOP_K=8
 CHUNK_SIZE=1000
 CHUNK_OVERLAP=150
+MAX_DOC_CHARS=250000
+EMBED_BATCH_SIZE=100
 ```
 
 

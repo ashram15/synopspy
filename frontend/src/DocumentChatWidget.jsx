@@ -2,12 +2,26 @@ import React, { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { FiMessageCircle, FiX, FiSend } from 'react-icons/fi';
 
-const DocumentChatWidget = ({ uploadId, visible, isOpen, onOpenChange }) => {
+const DocumentChatWidget = ({
+    uploadId,
+    visible,
+    isOpen,
+    onOpenChange,
+    ragStatus = null,
+    ragError = '',
+}) => {
     const { getAccessTokenSilently, isAuthenticated } = useAuth0();
     const [messages, setMessages] = useState([]);
     const [questionInput, setQuestionInput] = useState('');
     const [isAsking, setIsAsking] = useState(false);
     const [chatError, setChatError] = useState('');
+    const chatReady = ragStatus === 'ready';
+    const chatIndexing = ragStatus === 'pending';
+    const chatBlocked =
+        ragStatus === 'failed' ||
+        ragStatus === 'unavailable' ||
+        ragStatus === 'disabled' ||
+        ragStatus === 'unknown';
 
     useEffect(() => {
         setMessages([]);
@@ -24,7 +38,7 @@ const DocumentChatWidget = ({ uploadId, visible, isOpen, onOpenChange }) => {
 
     async function handleAskQuestion(event) {
         event.preventDefault();
-        if (!isAuthenticated || !uploadId || !questionInput.trim()) return;
+        if (!isAuthenticated || !uploadId || !questionInput.trim() || !chatReady) return;
 
         const question = questionInput.trim();
         setQuestionInput('');
@@ -65,7 +79,7 @@ const DocumentChatWidget = ({ uploadId, visible, isOpen, onOpenChange }) => {
         }
     }
 
-    const canChat = isAuthenticated && uploadId;
+    const canChat = isAuthenticated && uploadId && chatReady;
     const setOpen = (next) => onOpenChange?.(next);
 
     if (!visible) {
@@ -100,6 +114,14 @@ const DocumentChatWidget = ({ uploadId, visible, isOpen, onOpenChange }) => {
                             <p className="chat-widget-hint">Sign in to chat with your document.</p>
                         ) : !uploadId ? (
                             <p className="chat-widget-hint">Chat is available for saved uploads.</p>
+                        ) : chatIndexing ? (
+                            <p className="chat-widget-hint">
+                                Indexing this document for chat. You can ask questions once indexing finishes.
+                            </p>
+                        ) : chatBlocked ? (
+                            <p className="chat-widget-hint">
+                                {ragError || 'Document chat is unavailable for this upload. Try re-uploading the file.'}
+                            </p>
                         ) : messages.length === 0 ? (
                             <p className="chat-widget-hint">
                                 Ask a specific question about this document and get a grounded answer.
